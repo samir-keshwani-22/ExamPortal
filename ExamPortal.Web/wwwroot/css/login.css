@@ -2,3 +2,15 @@
     background-color: var(--primary_color);
 }
 
+.login-logo {
+    width: 180px;
+    max-width: 120px;
+    height: auto;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    background: #fff;
+    padding: 8px;
+    object-fit: contain;
+}

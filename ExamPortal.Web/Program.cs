@@ -1,7 +1,29 @@
+using ExamPortal.BusinessLogic.Implementations;
+using ExamPortal.BusinessLogic.Interfaces;
+using ExamPortal.DataAccess.DataContext;
+using ExamPortal.DataAccess.Implementations;
+using ExamPortal.DataAccess.Interfaces;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+var conn = builder.Configuration.GetConnectionString("my_connection");
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IJwtService, JwtService>();
+
+
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+
+
+builder.Services.AddDbContext<ExamPortalContext>(q => q.UseNpgsql(conn));
+
 
 var app = builder.Build();
 

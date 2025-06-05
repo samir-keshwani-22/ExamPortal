@@ -1,0 +1,19 @@
+namespace ExamPortal.DataAccess.Models
+{
+    public class Exam
+    {
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public int DurationMinutes { get; set; }
+        public int TotalMarks { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public int? CreatedBy { get; set; }
+        public int? UpdatedBy { get; set; }
+
+        public ICollection<Question> Questions { get; set; }
+        public ICollection<ExamSchedule> Schedules { get; set; }
+        public ICollection<ExamAttempt> Attempts { get; set; }
+    }
+}

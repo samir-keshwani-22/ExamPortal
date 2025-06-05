@@ -1,10 +1,10 @@
+@using ExamPortal.BusinessLogic.ViewModel.Account
 @{
     Layout = "_AuthLayout";
     ViewData["Title"] = "Register Page";
 
 }
-
-
+@model RegistrationViewModel
 <div class="vh-100">
     <div class="container py-5   h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
@@ -12,30 +12,62 @@
                 <div class="card   " style="border-radius: 1rem;">
                     <div class="card-body p-5 text-center">
                         <div class="mb-5 mt-5 pb-5">
-                            <form method="post">
-                                <h2 class="fw-bold mb-4 primary-color  ">REGISTER</h2>
+                            <form asp-action="Register" asp-controller="Account" method="post">
+                                <div class="d-flex flex-column align-items-center mb-4">
+                                    <img class="login-logo mb-2"
+                                        src="@Url.Content("~/img/logos/examportal-logo-transparent.png")"
+                                        alt="Exam Portal Logo" />
+                                    <h2 class="fw-bold mb-4 primary-color  ">REGISTER</h2>
+                                </div>
+                                <div class="row g-2">
+                                    <div class="col-12">
+                                        <div class="form-floating text-black mb-1  ">
+                                            <input asp-for="Email" type="email" class="form-control" id="floatingInput"
+                                                placeholder="name@example.com">
+                                            <label class="text-black" for="floatingInput">Email address</label>
 
-                                <div class="form-floating text-black mb-3  ">
-                                    <input type="email" class="form-control" id="floatingInput"
-                                        placeholder="name@example.com">
-                                    <label class="text-black" for="floatingInput">Email address</label>
-                                    <span style="" class="text-danger  mt-2 mb-3"></span>
+                                        </div>
+                                        <span asp-validation-for="Email" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="form-floating  text-black mb-1">
+                                            <input asp-for="Password" type="password" class="form-control"
+                                                id="floatingPassword" placeholder="Password">
+                                            <label for="floatingPassword">Password</label>
+                                        </div>
+                                        <span asp-validation-for="Password" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="form-floating  text-black mb-1">
+                                            <input asp-for="ConfirmPassword" type="password" class="form-control"
+                                                id="floatingPassword" placeholder="Password">
+                                            <label for="floatingPassword">Confirm Password</label>
+                                        </div>
+                                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <div class="form-floating text-black mb-1">
+                                            <input asp-for="FirstName" type="text" class="form-control"
+                                                id="floatingFirstName" placeholder="First Name">
+                                            <label for="floatingFirstName">First Name</label>
+                                        </div>
+                                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-floating text-black mb-1">
+                                            <input asp-for="LastName" type="text" class="form-control"
+                                                id="floatingLastName" placeholder="Last Name">
+                                            <label for="floatingLastName">Last Name</label>
+                                        </div>
+                                        <span asp-validation-for="LastName" class="text-danger"></span>
+                                    </div>
                                 </div>
 
-                                <div class="form-floating  text-black mb-3">
-                                    <input type="password" class="form-control" id="floatingPassword"
-                                        placeholder="Password">
-                                    <label for="floatingPassword">Password</label>
-                                    <span class="text-danger"></span>
-                                </div>
-                                <div class="form-floating  text-black mb-3">
-                                    <input type="password" class="form-control" id="floatingPassword"
-                                        placeholder="Password">
-                                    <label for="floatingPassword">Confirm Password</label>
-                                    <span class="text-danger"></span>
-                                </div>
-                                <button class="w-100 btn border    primary-button  btn-lg px-5 "
-                                    type="submit">Sign Up</button>
+                                <button class="w-100 btn border primary-button  btn-lg mt-3 px-5 " type="submit">Sign
+                                    Up</button>
                             </form>
                             <div class="row">
                                 <div class="col-12">
