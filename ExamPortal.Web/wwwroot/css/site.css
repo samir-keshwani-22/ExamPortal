@@ -2,6 +2,11 @@
     font-size: 14px;
   }
 
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
 
   :root {
     --primary_color: #0066a7;

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ExamPortal.Web.Controllers;
 
 [AllowAnonymous]
+[Route("Account")]
 public class AccountController : Controller
 {
     private readonly IAccountService _accountService;
@@ -14,6 +15,7 @@ public class AccountController : Controller
         _accountService = accountService;
     }
 
+    [HttpGet("Login")]
     public IActionResult Login()
     {
         return View();
@@ -68,5 +70,5 @@ public class AccountController : Controller
         ModelState.AddModelError("", "Registration failed. Please try again.");
         return View(model);
     }
- 
+
 }
