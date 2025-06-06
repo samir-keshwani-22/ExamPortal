@@ -60,15 +60,12 @@ public partial class ExamPortalContext : DbContext
            .HasOne(a => a.SelectedOption)
            .WithMany()
            .HasForeignKey(a => a.SelectedOptionId)
-           .OnDelete(DeleteBehavior.Restrict);  
+           .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<QuestionOption>()
             .HasOne(qo => qo.Question)
             .WithMany(q => q.Options)
             .HasForeignKey(qo => qo.QuestionId);
-
-
-
         OnModelCreatingPartial(modelBuilder);
     }
 

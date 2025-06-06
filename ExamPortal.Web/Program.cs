@@ -7,6 +7,7 @@ using ExamPortal.DataAccess.Implementations;
 using ExamPortal.DataAccess.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -22,14 +23,15 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 
 
+// i need to pass the root folder path so used this way injecion
+
+var webHostEnviroment = builder.Services.BuildServiceProvider().GetRequiredService<IWebHostEnvironment>();
+builder.Services.AddScoped<IEmailService>(provider =>
+    new EmailService(provider.GetRequiredService<IConfiguration>(), webHostEnviroment.WebRootPath));
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-
-
 builder.Services.AddDbContext<ExamPortalContext>(q => q.UseNpgsql(conn));
-
-
 
 var key = Encoding.ASCII.GetBytes(builder.Configuration["JwtSettings:SecretKey"]);
 
@@ -71,10 +73,18 @@ builder.Services.AddAuthentication(options =>
 });
 
 
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add(new ResponseCacheAttribute
+    {
+        NoStore = true,
+        Location = ResponseCacheLocation.None,
+    });
+});
+
+
 builder.Services.AddAuthorization(options =>
 {
-
-
     options.FallbackPolicy = new AuthorizationPolicyBuilder()
         .RequireAuthenticatedUser()
         .Build();
@@ -85,9 +95,6 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Account/Login";
 });
-
-
-
 
 var app = builder.Build();
 

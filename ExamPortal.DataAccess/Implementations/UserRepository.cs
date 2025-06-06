@@ -17,4 +17,10 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         return await _examPortalContext.Users.Include(u => u.Role)
             .FirstOrDefaultAsync(u => u.Email.Equals(email));
     }
+
+    public async Task<User> GetByResetToken(string token)
+    {
+        return await _examPortalContext.Users.FirstOrDefaultAsync(u => u.ResetToken.Equals(token));
+    }
+
 }

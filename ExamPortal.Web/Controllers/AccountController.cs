@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace ExamPortal.Web.Controllers;
 
 [AllowAnonymous]
-[Route("Account")]
 public class AccountController : Controller
 {
     private readonly IAccountService _accountService;
@@ -15,13 +14,18 @@ public class AccountController : Controller
         _accountService = accountService;
     }
 
-    [HttpGet("Login")]
+    [HttpGet]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public IActionResult Login()
     {
+        if (User.Identity.IsAuthenticated)
+        {
+            return RedirectToAction("Index", "Home");
+        }
         return View();
     }
 
-    [HttpPost("Login")]
+    [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(LoginViewModel model)
     {
@@ -47,13 +51,13 @@ public class AccountController : Controller
         return RedirectToAction("Index", "Home");
     }
 
-    [HttpGet("Register")]
+    [HttpGet]
     public async Task<IActionResult> Register()
     {
         return View();
     }
 
-    [HttpPost("Register")]
+    [HttpPost]
     public async Task<IActionResult> Register(RegistrationViewModel model)
     {
         if (!ModelState.IsValid)
@@ -70,7 +74,7 @@ public class AccountController : Controller
         return View(model);
     }
 
-    [HttpPost("Logout")]
+    [HttpPost]
     public IActionResult Logout()
     {
         Response.Cookies.Delete("AuthToken");
@@ -78,12 +82,53 @@ public class AccountController : Controller
         return RedirectToAction("Login");
     }
 
-
-    [HttpGet("ForgetPassword")]
+    [HttpGet]
     public IActionResult ForgetPassword()
     {
         return View();
     }
 
+    [HttpPost]
+    public async Task<IActionResult> ForgetPassword(ForgetPasswordViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            TempData["ErrorMessage"] = "Failed to reset the password";
+            return View(model);
+        }
+        bool success = await _accountService.ForgetPasswordAsync(model.Email, Url);
+        if (!success)
+        {
+            TempData["ErrorMessage"] = "Failed to reset the password";
+            ModelState.AddModelError(string.Empty, "No account found with this email.");
+            return View(model);
+        }
+        TempData["SuccessMessage"] = "A Password reset link has been sent to your email.";
+        return RedirectToAction("Login");
+    }
 
+    [HttpGet]
+    public IActionResult ResetPassword(string token)
+    {
+        var model = new ResetPasswordViewModel { Token = token };
+        return View(model);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+    {
+        if (ModelState.IsValid)
+        {
+            bool success = await _accountService.ResetPasswordAsync(model);
+            if (!success)
+            {
+                TempData["ErrorMessage"] = "Failed to reset the password";
+                ModelState.AddModelError(string.Empty, "Invalid Token");
+                return View(model);
+            }
+            TempData["SuccessMessage"] = "Password has been reset successfully.";
+            return RedirectToAction("Login");
+        }
+        return View(model);
+    } 
 }

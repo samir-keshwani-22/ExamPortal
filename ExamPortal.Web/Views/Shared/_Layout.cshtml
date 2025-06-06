@@ -40,6 +40,12 @@
                                     <i class="fas fa-user pe-2"></i>Users
                                 </a>
                             </li>
+                            <li class="sidebar-item">
+                                <a asp-action="UserList" asp-controller="User"
+                                    class="sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "User" ? "active" : "")">
+                                   <i class="bi bi-journal-album pe-2"></i>Examination
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </aside>

@@ -20,12 +20,10 @@ public class JwtService : IJwtService
     {
         var key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:SecretKey"]);
         var tokenHandler = new JwtSecurityTokenHandler();
-
         var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Email, email)
             };
-
         if (!isPasswordReset && role != null)
         {
             claims.Add(new Claim(ClaimTypes.Role, role));
@@ -34,7 +32,7 @@ public class JwtService : IJwtService
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = isPasswordReset ? DateTime.Now.AddMinutes(5) : (rememberMe ? DateTime.Now.AddDays(15) : DateTime.Now.AddHours(1)),
+            Expires = isPasswordReset ? DateTime.Now.AddHours(24) : (rememberMe ? DateTime.Now.AddDays(15) : DateTime.Now.AddHours(1)),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
 
@@ -62,8 +60,8 @@ public class JwtService : IJwtService
             return principal;
         }
         catch (SecurityTokenExpiredException)
-        { 
-            
+        {
+
             return null;
         }
         catch (Exception ex)

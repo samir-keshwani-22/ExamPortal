@@ -5,8 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ExamPortal.Web.Controllers;
 
-
-[Authorize(Roles = "student")]
+ 
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
