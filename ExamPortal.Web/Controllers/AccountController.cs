@@ -22,7 +22,7 @@ public class AccountController : Controller
     }
 
     [HttpPost("Login")]
-
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(LoginViewModel model)
     {
         if (!ModelState.IsValid)
@@ -36,7 +36,6 @@ public class AccountController : Controller
             ModelState.AddModelError(string.Empty, "User is not valid or Password is incorrect .");
             return View(model);
         }
-
         Response.Cookies.Append("AuthToken", token, new CookieOptions
         {
             HttpOnly = true,
@@ -44,7 +43,7 @@ public class AccountController : Controller
             SameSite = SameSiteMode.Strict,
             Expires = model.RememberMe ? DateTime.Now.AddDays(15) : DateTime.Now.AddHours(1)
         });
-        TempData["SuccessMessage"] = "Logged in Successfully";
+        if (ModelState.IsValid) TempData["SuccessMessage"] = "Logged in Successfully";
         return RedirectToAction("Index", "Home");
     }
 
@@ -70,5 +69,21 @@ public class AccountController : Controller
         ModelState.AddModelError("", "Registration failed. Please try again.");
         return View(model);
     }
+
+    [HttpPost("Logout")]
+    public IActionResult Logout()
+    {
+        Response.Cookies.Delete("AuthToken");
+        TempData["SuccessMessage"] = "Logged out successfully.";
+        return RedirectToAction("Login");
+    }
+
+
+    [HttpGet("ForgetPassword")]
+    public IActionResult ForgetPassword()
+    {
+        return View();
+    }
+
 
 }

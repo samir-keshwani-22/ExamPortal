@@ -19,8 +19,6 @@
                                         alt="Exam Portal Logo" />
                                     <h2 class="fw-bold primary-color">LOGIN</h2>
                                 </div>
-
-
                                 <div class="row g-2">
                                     <div class="col-12">
                                         <div class="form-floating text-black mb-3  ">
@@ -58,7 +56,8 @@
                                     <div class="d-flex gap-2 gap-md-4 flex-column flex-md-row justify-content-md-end">
                                         <a asp-action="Register" asp-controller="Account"
                                             class="link-secondary text-decoration-none">Create new account</a>
-                                        <a href="#!" class="link-secondary text-decoration-none">Forgot password</a>
+                                        <a asp-action="ForgetPassword" asp-controller="Account"
+                                            class="link-secondary text-decoration-none">Forgot password</a>
                                     </div>
                                 </div>
                             </div>

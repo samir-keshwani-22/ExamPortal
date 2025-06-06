@@ -39,7 +39,7 @@ public class AccountService : IAccountService
             FirstName = model.FirstName,
             LastName = model.LastName,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password),
-            RoleId = 2
+            RoleId = 1
         };
         await _userRepository.AddAsync(user);
         return true;
