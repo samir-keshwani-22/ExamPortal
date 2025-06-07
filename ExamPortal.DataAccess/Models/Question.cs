@@ -13,6 +13,9 @@ namespace ExamPortal.DataAccess.Models
         public int? CreatedBy { get; set; }
         public int? UpdatedBy { get; set; }
 
+        public string? Topic { get; set; }
+        public string? DifficultyLevel { get; set; }
+
         public ICollection<QuestionOption> Options { get; set; }
         public ICollection<Answer> Answers { get; set; }
     }
