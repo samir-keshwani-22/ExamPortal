@@ -1,0 +1,38 @@
+@using ExamPortal.BusinessLogic.ViewModel.Examintaion
+@model List<ExamViewModel>
+
+@{
+    ViewData["Title"] = "Examinations";
+}
+<script src="~/js/examination.js"></script>
+
+<div class="main">
+    <div class="container-fluid mt-1 px-0 pt-2">
+        <div class="container-fluid px-0" style="background-color: #f2f2f2;">
+            <div class="heading-content py-2 mx-4 d-flex flex-column flex-md-row justify-content-between">
+                <div class="heading-left fw-bolder">
+                    <h1 style="color: #333446;">Examinations</h1>
+                </div>
+                <div class="heading-right justify-content-end d-flex align-items-center">
+                    <a class="btn-anchor h-100" onclick="openAddExamModal()">
+                        <button type="button" class="btn border-2" 
+                            style="height: 100%; white-space: nowrap; color: white; background-color: #333446;">
+                            <i class="fa-solid fa-plus"></i>
+                            <span class="lh-sm">Add Exam</span>
+                        </button>
+                    </a>
+                </div>
+            </div>
+
+            <div class="content mx-4">
+                <div class="table-responsive shadow-sm bg-white mt-2 p-2" id="examListContainer">
+                    @await Html.PartialAsync("_ExamList", Model)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="addExamModalPlaceholder">
+
+</div>

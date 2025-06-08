@@ -22,6 +22,7 @@ public class AccountService : IAccountService
     public async Task<bool> RegisterAsync(RegistrationViewModel model)
     {
         if (model == null)
+
         {
             throw new ArgumentNullException(nameof(model), "Registration model cannot be null ");
 

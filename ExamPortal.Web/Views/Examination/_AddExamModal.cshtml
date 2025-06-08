@@ -1,0 +1,48 @@
+@using ExamPortal.BusinessLogic.ViewModel.Examintaion
+@model ExamViewModel
+
+<div class="modal fade" id="addExamModal" tabindex="-1" aria-labelledby="addExamLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content rounded-4 shadow">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="addExamLabel"><i class="bi bi-journal-plus me-2"></i>New Exam</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" asp-action="AddExam">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Title</label>
+                            <input type="text" name="Title" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Start Date</label>
+                            <input type="datetime-local" name="StartDate" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">End Date</label>
+                            <input type="datetime-local" name="EndDate" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Duration (Minutes)</label>
+                            <input type="number" name="Duration" class="form-control" required />
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Description</label>
+                            <textarea name="Description" class="form-control" rows="3"
+                                placeholder="Optional"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0">
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-save2-fill me-1"></i>Save and Continue
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

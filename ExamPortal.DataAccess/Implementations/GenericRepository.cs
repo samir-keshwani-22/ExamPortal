@@ -50,7 +50,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     public async Task UpdateAsync(T entity)
     {
         _dbSet.Update(entity);
-        _context.SaveChangesAsync();
+       await _context.SaveChangesAsync();
     }
 
 }

@@ -28,6 +28,10 @@
     border: 1px solid var(--primary_color);
   }
 
+  .bg-primary {
+    background-color: var(--primary_color) !important;
+  }
+
   .primary-button:hover,
   .primary-button-with-bg {
     background-color: var(--primary_color) !important;

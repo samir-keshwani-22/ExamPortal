@@ -41,9 +41,9 @@
                                 </a>
                             </li>
                             <li class="sidebar-item">
-                                <a asp-action="UserList" asp-controller="User"
-                                    class="sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "User" ? "active" : "")">
-                                   <i class="bi bi-journal-album pe-2"></i>Examination
+                                <a asp-action="Index" asp-controller="Examination"
+                                    class="sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "Examination" ? "active" : "")">
+                                    <i class="bi bi-journal-album pe-2"></i>Examination
                                 </a>
                             </li>
                         </ul>
@@ -56,7 +56,10 @@
                 <nav class="header">
                     <button class="btn btn-light" id="toggleSidebar"><i class="fas fa-bars"></i></button>
                     <div class="dropdown d-flex">
-
+                        <a 
+                            class="icon-container text-decoration-none text-white">
+                            <i class="bi bi-bell pt-1"></i>
+                        </a>
 
                         <a class="btn py-0" href="#" data-bs-toggle="dropdown" style="background-color: #333446;"
                             aria-expanded="false">

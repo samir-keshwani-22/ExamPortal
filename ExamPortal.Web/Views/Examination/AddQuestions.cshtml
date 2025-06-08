@@ -1,0 +1,14 @@
+@using ExamPortal.BusinessLogic.ViewModel.Examintaion
+@model AddQuestionViewModel
+
+<div class="container mt-4">
+
+    <div id="questionFormContainer">
+        @await Html.PartialAsync("_QuestionForm", Model)
+    </div>
+
+    <div id="questionListContainer" class="py-2">
+        @await Html.PartialAsync("_QuestionList", Model.ExistingQuestions)
+    </div>
+
+</div>

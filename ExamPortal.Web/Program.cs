@@ -13,19 +13,26 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var webHostEnviroment = builder.Services.BuildServiceProvider().GetRequiredService<IWebHostEnvironment>();
+
+// var webHostEnviroment = builder.Environment;
+
 var conn = builder.Configuration.GetConnectionString("my_connection");
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
+
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IExaminationService, ExaminationService>();
 
 
 // i need to pass the root folder path so used this way injecion
 
-var webHostEnviroment = builder.Services.BuildServiceProvider().GetRequiredService<IWebHostEnvironment>();
 builder.Services.AddScoped<IEmailService>(provider =>
     new EmailService(provider.GetRequiredService<IConfiguration>(), webHostEnviroment.WebRootPath));
 
