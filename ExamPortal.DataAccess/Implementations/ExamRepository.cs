@@ -16,7 +16,12 @@ namespace ExamPortal.DataAccess.Implementations
 
         public async Task<Exam> GetExamByNameAsync(string name)
         {
-            return await _examPortalContext.Exams.FirstOrDefaultAsync(e => e.Title.ToLower() == name.ToLower());
+            return await _examPortalContext.Exams.FirstOrDefaultAsync(e => e.Title.ToLower() == name.ToLower() && e.IsDeleted == false);
+        }
+
+        public async Task<IEnumerable<Exam>> GetAllAsync()
+        {
+            return await _examPortalContext.Exams.Where(e => e.IsDeleted == false).ToListAsync();
         }
 
     }

@@ -22,12 +22,12 @@ public class ExamViewModel
     [Required]
     [DataType(DataType.DateTime)]
     [Display(Name = "Start Date & Time")]
-    public DateTime StartDate { get; set; }
+    public DateTime StartDate { get; set; } = DateTime.Now;
 
     [Required]
     [DataType(DataType.DateTime)]
     [Display(Name = "End Date & Time")]
-    public DateTime EndDate { get; set; }
+    public DateTime EndDate { get; set; } = DateTime.Now;
 
     [Range(1, int.MaxValue, ErrorMessage = "Total marks must be greater than 0")]
     public int? TotalMarks { get; set; }

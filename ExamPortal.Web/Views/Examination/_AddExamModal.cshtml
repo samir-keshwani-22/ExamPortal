@@ -8,7 +8,7 @@
                 <h5 class="modal-title" id="addExamLabel"><i class="bi bi-journal-plus me-2"></i>New Exam</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <form method="post" asp-action="AddExam">
+            <form id="addExamForm" asp-controller="Examination" method="post" asp-action="AddExam">
                 <div class="modal-body">
                     <div class="row g-3">
                         <div class="col-md-6">

@@ -36,12 +36,6 @@ public partial class User
     [Column("profile_img", TypeName = "character varying")]
     public string? ProfileImg { get; set; }
 
-    [Column("created_at")]
-    public DateTime CreatedAt { get; set; }
-
-    [Column("updated_at")]
-    public DateTime? UpdatedAt { get; set; }
-
     [Column("role_id")]
     public int RoleId { get; set; }
 
@@ -51,10 +45,19 @@ public partial class User
     [InverseProperty("Users")]
     public virtual Role Role { get; set; } = null!;
 
+    [Column("created_at")]
+    public DateTime CreatedAt { get; set; }
+
+    [Column("updated_at")]
+    public DateTime? UpdatedAt { get; set; }
+
+    public int? CreatedBy { get; set; }
+    public int? UpdatedBy { get; set; }
+
     public int? DeletedBy { get; set; }
     public DateTime? DeletedAt { get; set; }
 
-    // public bool? IsDeleted{}
+    public bool? IsDeleted { get; set; } = false;
 
     public ICollection<ExamAttempt> ExamAttempts { get; set; }
     public ICollection<UserSession> UserSessions { get; set; }

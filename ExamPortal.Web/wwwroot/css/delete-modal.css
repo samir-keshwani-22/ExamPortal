@@ -52,7 +52,7 @@
 }
 
 .btn-secondary:hover {
-    background-color: #dee2e6;
+    /* background-color: #dee2e6; */
 }
 
 .btn-danger {
@@ -63,6 +63,12 @@
 .warning-icon {
     font-size: 3rem;
     color: #ffc107;
+    margin-bottom: 1rem;
+}
+
+.delete-icon {
+    font-size: 3rem;
+    color: red !important;
     margin-bottom: 1rem;
 }
 

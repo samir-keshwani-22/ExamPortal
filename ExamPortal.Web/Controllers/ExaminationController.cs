@@ -21,9 +21,17 @@ public class ExaminationController : Controller
         return View(exams);
     }
 
+    [HttpGet("GetExamListPartial")]
+    public async Task<IActionResult> GetExamListPartial()
+    {
+        var exams = await _examinationService.GetAllExamsAsync();
+        return PartialView("_ExamList", exams);
+    }
+
     [HttpGet("AddExam")]
     public IActionResult AddExam()
     {
+        var model = new ExamViewModel();
         return PartialView("_AddExamModal", new ExamViewModel());
     }
 
@@ -31,7 +39,14 @@ public class ExaminationController : Controller
     public async Task<IActionResult> AddExam(ExamViewModel model)
     {
         if (!ModelState.IsValid)
-            return PartialView("_AddExamModal", model);
+            return BadRequest(new { message = "ModalState invalid .", errorCode = "ModelStateInvalid" });
+
+
+        if (await _examinationService.CheckExamExistsAsync(model.Title))
+        {
+            return BadRequest(new { message = "Exam with the same name already exists.", errorCode = "DuplicateExamName" });
+        }
+
         var examId = await _examinationService.AddExamAsync(model);
         if (examId > 0)
             return RedirectToAction("AddQuestions", new { examId });
@@ -69,6 +84,22 @@ public class ExaminationController : Controller
         return View(model);
     }
 
+
+    [HttpPost("DeleteExam")]
+
+    public async Task<IActionResult> DeleteExam(int id)
+    {
+        bool success = await _examinationService.DeleteExamAsync(id);
+        if (success == false)
+        {
+            return BadRequest(new { message = "Unable to delete the table." });
+        }
+        return Ok(new { success = true, message = "Exam deleted !" });
+
+    }
+
+
+
     [HttpPost("AddOrUpdateQuestion")]
     public async Task<IActionResult> AddOrUpdateQuestion(AddQuestionViewModel model)
     {
@@ -78,7 +109,7 @@ public class ExaminationController : Controller
         }
         await _examinationService.AddOrUpdateQuestionAsync(model);
         var modelAddQuestion = await _examinationService.GetAddQuestionModel(model.ExamId);
-        return PartialView("_QuestionForm", new AddQuestionViewModel());
+        return PartialView("_QuestionForm", modelAddQuestion);
     }
 
     [HttpGet("GetQuestionListPartial")]

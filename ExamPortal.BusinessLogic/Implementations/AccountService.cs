@@ -3,7 +3,6 @@ using ExamPortal.BusinessLogic.ViewModel.Account;
 using ExamPortal.DataAccess.Interfaces;
 using ExamPortal.DataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
-using Npgsql.Internal.TypeMapping;
 
 namespace ExamPortal.BusinessLogic.Implementations;
 

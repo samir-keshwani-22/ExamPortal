@@ -66,6 +66,7 @@ public class ExaminationService : IExaminationService
             question.UpdatedAt = DateTime.UtcNow;
 
             await _questionRepository.UpdateAsync(question);
+            // fixing this is left 
             var existingOptions = (await _optionRepository.GetAllAsync())
                                   .Where(o => o.QuestionId == question.Id)
                                   .ToList();
@@ -189,5 +190,24 @@ public class ExaminationService : IExaminationService
         exam.EndDate = model.EndDate;
         await _examRepository.UpdateAsync(exam);
         return true;
+    }
+    public async Task<bool> DeleteExamAsync(int examId)
+    {
+        Exam exam = await _examRepository.GetByIdAsync(examId);
+        if (exam == null)
+        {
+            return false;
+        }
+        exam.IsDeleted = true;
+        await _examRepository.UpdateAsync(exam);
+        return true;
+    }
+
+    public async Task<bool> CheckExamExistsAsync(string name)
+    {
+        var exam = await _examRepository.GetExamByNameAsync(name);
+        if (exam != null)
+            return true;
+        return false;
     }
 }

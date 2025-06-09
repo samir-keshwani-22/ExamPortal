@@ -16,6 +16,9 @@ namespace ExamPortal.DataAccess.Models
         public string? Topic { get; set; }
         public string? DifficultyLevel { get; set; }
 
+
+        public bool? IsDeleted { get; set; } = false;
+
         public ICollection<QuestionOption> Options { get; set; }
         public ICollection<Answer> Answers { get; set; }
     }
