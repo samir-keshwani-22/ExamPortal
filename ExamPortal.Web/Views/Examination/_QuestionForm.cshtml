@@ -1,123 +1,67 @@
 @using ExamPortal.BusinessLogic.ViewModel.Examintaion
 @model AddQuestionViewModel
 
+<div>
+    
 
-<form id="questionForm" asp-action="AddOrUpdateQuestion" method="post">
-    <input type="hidden" asp-for="Id" />
-    <input type="hidden" asp-for="ExamId" />
 
-    <div class="mb-3">
-        <label asp-for="QuestionText" class="form-label">Question</label>
-        <textarea asp-for="QuestionText" class="form-control" rows="3"></textarea>
-        <span asp-validation-for="QuestionText" class="text-danger"></span>
-    </div>
+    <form id="questionForm" asp-action="AddOrUpdateQuestion" method="post">
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="ExamId" />
+        <div class="mb-3">
+            <label asp-for="QuestionText" class="form-label">Question</label>
+            <textarea asp-for="QuestionText" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="QuestionText" class="text-danger"></span>
+        </div>
 
-    <div class="mb-3">
-        <label asp-for="QuestionType" class="form-label">Question Type</label>
-        <select asp-for="QuestionType" class="form-select" id="questionTypeSelector">
-            <option value="">-- Select --</option>
-            <option value="MCQ">MCQ</option>
-            <option value="TrueFalse">True/False</option>
-            <option value="ShortAnswer">Short Answer</option>
-        </select>
-        <span asp-validation-for="QuestionType" class="text-danger"></span>
-    </div>
+        <div class="mb-3">
+            <label asp-for="QuestionType" class="form-label">Question Type</label>
+            <select asp-for="QuestionType" class="form-select" id="questionTypeSelector">
+                <option value="">Select question type</option>
+                <option value="MCQ">MCQ</option>
+                <option value="TrueFalse">True/False</option>
+            </select>
+            <span asp-validation-for="QuestionType" class="text-danger"></span>
+        </div>
 
-    <div class="mb-3">
-        <label asp-for="Topic" class="form-label">Topic (optional)</label>
-        <input asp-for="Topic" class="form-control" />
-    </div>
+        <div class="mb-3">
+            <label asp-for="Topic" class="form-label">Topic </label>
+            <input asp-for="Topic" class="form-control" />
+        </div>
 
-    <div class="mb-3">
-        <label asp-for="DifficultyLevel" class="form-label">Difficulty Level</label>
-        <select asp-for="DifficultyLevel" class="form-select">
-            <option value="">-- Select --</option>
-            <option value="Easy">Easy</option>
-            <option value="Medium">Medium</option>
-            <option value="Hard">Hard</option>
-        </select>
-    </div>
+        <div class="mb-3">
+            <label asp-for="DifficultyLevel" class="form-label">Difficulty Level</label>
+            <select asp-for="DifficultyLevel" class="form-select">
+                <option value="">Select difficulty type</option>
+                <option value="Easy">Easy</option>
+                <option value="Medium">Medium</option>
+                <option value="Hard">Hard</option>
+            </select>
+        </div>
 
-    <div class="mb-3">
-        <label asp-for="Marks" class="form-label">Marks</label>
-        <input asp-for="Marks" class="form-control" type="number" min="1" />
-        <span asp-validation-for="Marks" class="text-danger"></span>
-    </div>
+        <div class="mb-3">
+            <label asp-for="Marks" class="form-label">Marks</label>
+            <input asp-for="Marks" class="form-control" type="number" min="1" />
+            <span asp-validation-for="Marks" class="text-danger"></span>
+        </div>
 
-    <div id="dynamicOptions">
-        <!-- This will be filled by JS -->
-    </div>
+        <div id="dynamicOptions">
+        </div>
 
-    <div class="mb-3" id="correctOptionDiv">
-        <label asp-for="CorrectOptionIndex" class="form-label">Correct Option Number</label>
-        <input asp-for="CorrectOptionIndex" class="form-control" type="number" />
-        <span asp-validation-for="CorrectOptionIndex" class="text-danger"></span>
-    </div>
+        <div class="mb-3" id="correctOptionDiv">
+            <label asp-for="CorrectOptionIndex" class="form-label">Correct Option Number</label>
+            <input asp-for="CorrectOptionIndex" class="form-control" type="number" />
+            <span asp-validation-for="CorrectOptionIndex" class="text-danger"></span>
+        </div>
 
-    <button type="submit" class="btn text-white" style="background-color: #0066a7;">
-        @(Model.Id > 0 ? "Update Question" : "Add Question")
-    </button>
-</form>
-<script>
-    function renderOptions(type) {
-        const container = $("#dynamicOptions");
-        container.empty();
+        <button type="submit" class="btn   primary-button">
+            @(Model.Id > 0 ? "Update Question" : "Add Question")
+        </button>
+    </form>
+</div>
 
-        if (type === "MCQ") {
-            for (let i = 0; i < 4; i++) {
-                container.append(`
-                        <div class="mb-2">
-                            <label class="form-label">Option ${i + 1}</label>
-                            <input name="Options[${i}]" class="form-control" placeholder="Option ${i + 1}" />
-                        </div>
-                    `);
-            }
-            $("#correctOptionDiv").show();
-        } else if (type === "TrueFalse") {
-            container.append(`
-                    <div class="mb-2">
-                        <label class="form-label">Option 1</label>
-                        <input name="Options[0]" class="form-control" value="True" readonly />
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Option 2</label>
-                        <input name="Options[1]" class="form-control" value="False" readonly />
-                    </div>
-                `);
-            $("#correctOptionDiv").show();
-        }
-    }
 
-    $(document).ready(function () {
-        renderOptions($("#questionTypeSelector").val());
 
-        $("#questionTypeSelector").change(function () {
-            renderOptions($(this).val());
-        });
-
-        $("#questionForm").submit(function (e) {
-            e.preventDefault();
-            var form = $(this);
-
-            $.ajax({
-                url: form.attr("action"),
-                type: "POST",
-                data: form.serialize(),
-                success: function (formPartialHtml) {
-                var examId=     $("#ExamId").val();
-                    $("#questionFormContainer").html(formPartialHtml);
-                    debugger
-                    $.get('/Examination/GetQuestionListPartial', { examId:  examId}, function (listPartialHtml) {
-                        $("#questionListContainer").html(listPartialHtml);
-                    });
-                },
-                error: function () {
-                    alert("An error occurred");
-                }
-            });
-        });
-    });
-</script>
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 

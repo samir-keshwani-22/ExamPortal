@@ -1,8 +1,8 @@
 @using ExamPortal.BusinessLogic.ViewModel.Examintaion
-@model List<QuestionListItemViewModel> 
+@model List<QuestionListItemViewModel>
 <div class="card shadow-sm">
     <div class="card-header bg-white">
-        <h5 class="mb-0" style="color: #0066a7;">Added Questions</h5>
+        <h5 class="mb-0 primary-color">Added Questions</h5>
     </div>
     <div class="card-body" style="max-height: 300px; overflow-y: auto;">
         @if (Model?.Any() ?? false)
@@ -12,8 +12,8 @@
                 {
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <div>
-                            <strong>@q.QuestionText</strong> <br />
-                            <small>Type: @q.QuestionType | Marks: @q.Marks</small>
+                            <strong class="primary-color">@q.QuestionText</strong> <br />
+                            <small class="primary-color">Type: @q.QuestionType | Marks: @q.Marks</small>
                         </div>
                         <div>
                             <button class="btn btn-sm btn-outline-primary me-2 edit-question" data-id="@q.Id">Edit</button>
@@ -32,17 +32,6 @@
 
 @section Scripts {
     <script>
-        $(".edit-question").click(function () {
-            const questionId = $(this).data("id");
-            // Call AJAX to load edit form partial for the questionId
-            // Then replace the form partial container with the loaded data
-        });
 
-        $(".delete-question").click(function () {
-            const questionId = $(this).data("id");
-            if (confirm("Are you sure you want to delete this question?")) {
-                // Call AJAX to delete question by questionId, then refresh list & form
-            }
-        });
     </script>
 }

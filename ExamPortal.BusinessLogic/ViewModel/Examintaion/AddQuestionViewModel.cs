@@ -6,7 +6,7 @@ namespace ExamPortal.BusinessLogic.ViewModel.Examintaion
     {
         public int Id { get; set; }
         public int ExamId { get; set; }
-        public string ExamTitle { get; set; }
+        public string? ExamTitle { get; set; }
 
         [Required]
         public string QuestionText { get; set; }
@@ -23,7 +23,7 @@ namespace ExamPortal.BusinessLogic.ViewModel.Examintaion
         [Range(1, 4)]
         public int CorrectOptionIndex { get; set; }
 
-        public List<QuestionListItemViewModel> ExistingQuestions { get; set; }
+        public List<QuestionListItemViewModel>? ExistingQuestions { get; set; }
     }
 
     public class QuestionListItemViewModel

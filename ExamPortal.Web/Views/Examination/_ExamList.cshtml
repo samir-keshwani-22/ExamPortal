@@ -24,12 +24,12 @@
                     <td class="text-center">@exam.StartDate.ToString("dd MMM yyyy")</td>
                     <td class="text-center">@exam.EndDate.ToString("dd MMM yyyy")</td>
                     <td class="text-center">
-                        <a asp-action="Edit" asp-route-id="@exam.Id" class="text-decoration-none text-reset">
-                            <i class="fa-solid fa-pen bg-black mx-2"></i>
-                        </a>
-                        <a onclick="setExamToDelete(@exam.Id)" class="text-decoration-none text-reset">
-                            <i class="fa-solid fa-trash" data-bs-toggle="modal" data-bs-target="#deleteExamModal"></i>
-                        </a>
+
+                        <i role="button" class="fa-solid fa-pen bg-black mx-2 edit-exam-icon primary-color"
+                            data-exam-id="@exam.Id"></i>
+                        <i role="button" class="fa-solid fa-trash primary-color" data-bs-toggle="modal"
+                            data-bs-target="#deleteExamModal"></i>
+
                     </td>
                 </tr>
             }
@@ -61,17 +61,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    let examToDeleteId = null;
-
-    function setExamToDelete(id) {
-        examToDeleteId = id;
-    }
-
-    function confirmExamDelete() {
-        if (examToDeleteId) {
-            window.location.href = `/Examination/Delete/${examToDeleteId}`;
-        }
-    }
-</script>

@@ -37,6 +37,7 @@ builder.Services.AddScoped<IEmailService>(provider =>
     new EmailService(provider.GetRequiredService<IConfiguration>(), webHostEnviroment.WebRootPath));
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 
 builder.Services.AddDbContext<ExamPortalContext>(q => q.UseNpgsql(conn));
 

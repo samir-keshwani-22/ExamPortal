@@ -32,35 +32,50 @@ public class ExaminationController : Controller
     {
         if (!ModelState.IsValid)
             return PartialView("_AddExamModal", model);
-
-
         var examId = await _examinationService.AddExamAsync(model);
-        var success = true;
-        if (success)
+        if (examId > 0)
             return RedirectToAction("AddQuestions", new { examId });
 
         ModelState.AddModelError("", "Something went wrong");
         return View(model);
     }
 
-    [HttpGet("AddQuestions")]
-    public IActionResult AddQuestions(int examId)
+    [HttpGet("EditExam")]
+    public async Task<IActionResult> EditExam(int id)
     {
-        return View(new AddQuestionViewModel { ExamId = examId });
+        var exam = await _examinationService.GetEditExamModel(id);
+        return PartialView("_EditExamModal", exam);
+    }
+
+    [HttpPost("EditExam")]
+    public async Task<IActionResult> EditExam(ExamViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return Json(new { success = false, message = "Unable to edit exam modal state invalid " });
+        }
+        
+    }
+
+
+
+    [HttpGet("AddQuestions")]
+    public async Task<IActionResult> AddQuestions(int examId)
+    {
+        var model = await _examinationService.GetAddQuestionModel(examId);
+        return View(model);
     }
 
     [HttpPost("AddOrUpdateQuestion")]
     public async Task<IActionResult> AddOrUpdateQuestion(AddQuestionViewModel model)
     {
-        // if (!ModelState.IsValid)
-        // {
-        //     return PartialView("_QuestionFormPartial", model); // return form with validation errors
-        // }
-
+        if (!ModelState.IsValid)
+        {
+            return PartialView("_QuestionFormPartial", model);
+        }
         await _examinationService.AddOrUpdateQuestionAsync(model);
-
-        var clearedModel = new AddQuestionViewModel { ExamId = model.ExamId };
-        return PartialView("_QuestionForm", clearedModel); // return cleared form
+        var modelAddQuestion = await _examinationService.GetAddQuestionModel(model.ExamId);
+        return PartialView("_QuestionForm", new AddQuestionViewModel());
     }
 
     [HttpGet("GetQuestionListPartial")]

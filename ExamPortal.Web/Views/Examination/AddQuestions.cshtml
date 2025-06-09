@@ -1,14 +1,30 @@
 @using ExamPortal.BusinessLogic.ViewModel.Examintaion
 @model AddQuestionViewModel
+@{
+    ViewData["Title"] = "Add Questions";
+}
+<script src="~/js/examination.js"></script>
 
 <div class="container mt-4">
-
     <div id="questionFormContainer">
+        <div class="heading-content py-2  d-flex flex-column flex-md-row justify-content-between">
+            <div class="heading-left fw-bolder">
+
+                <h3 class="text-center primary-color">@Model.ExamTitle</h3>
+            </div>
+            <div class="heading-right justify-content-end d-flex align-items-center">
+                <a asp-action="Index" asp-controller="Examination" class="btn-anchor h-100">
+                    <button type="button" class="btn border-2"
+                        style="height: 100%; white-space: nowrap; color: white; background-color: #333446;">
+                        <i class="bi bi-chevron-left"></i>
+                        <span class="lh-sm">Exam List</span>
+                    </button>
+                </a>
+            </div>
+        </div>
         @await Html.PartialAsync("_QuestionForm", Model)
     </div>
-
     <div id="questionListContainer" class="py-2">
         @await Html.PartialAsync("_QuestionList", Model.ExistingQuestions)
     </div>
-
 </div>

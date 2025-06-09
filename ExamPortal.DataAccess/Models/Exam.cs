@@ -6,7 +6,7 @@ namespace ExamPortal.DataAccess.Models
         public string Title { get; set; }
         public string Description { get; set; }
         public TimeSpan DurationMinutes { get; set; }
-        public int ? TotalMarks { get; set; }
+        public int? TotalMarks { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }

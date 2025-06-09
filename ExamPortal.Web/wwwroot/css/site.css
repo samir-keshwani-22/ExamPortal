@@ -28,6 +28,18 @@
     border: 1px solid var(--primary_color);
   }
 
+  .secondary-button {
+    background-color: var(--primary_color);
+    color: white;
+  }
+
+  .secondary-button:hover {
+    background-color: white !important;
+    color: var(--primary_color) !important;
+    border: 1px solid var(--primary_color);
+  }
+
+
   .bg-primary {
     background-color: var(--primary_color) !important;
   }

@@ -7,10 +7,10 @@ namespace ExamPortal.BusinessLogic.Implementations;
 public class ExaminationService : IExaminationService
 {
     private readonly IGenericRepository<Exam> _examRepository;
-    private readonly IGenericRepository<Question> _questionRepository;
+    private readonly IQuestionRepository _questionRepository;
     private readonly IGenericRepository<QuestionOption> _optionRepository;
 
-    public ExaminationService(IGenericRepository<Exam> examRepository, IGenericRepository<QuestionOption> optionRepository, IGenericRepository<Question> questionRepository)
+    public ExaminationService(IGenericRepository<Exam> examRepository, IGenericRepository<QuestionOption> optionRepository, IQuestionRepository questionRepository)
     {
         _examRepository = examRepository;
         _questionRepository = questionRepository;
@@ -44,7 +44,6 @@ public class ExaminationService : IExaminationService
             EndDate = model.EndDate,
             CreatedAt = DateTime.UtcNow
         };
-
         await _examRepository.AddAsync(exam);
         return exam.Id;
     }
@@ -52,7 +51,6 @@ public class ExaminationService : IExaminationService
     public async Task AddOrUpdateQuestionAsync(AddQuestionViewModel model)
     {
         Question question;
-
         if (model.Id > 0)
         {
             question = await _questionRepository.GetByIdAsync(model.Id);
@@ -66,8 +64,6 @@ public class ExaminationService : IExaminationService
             question.UpdatedAt = DateTime.UtcNow;
 
             await _questionRepository.UpdateAsync(question);
-
-            // Delete old options one by one
             var existingOptions = (await _optionRepository.GetAllAsync())
                                   .Where(o => o.QuestionId == question.Id)
                                   .ToList();
@@ -113,10 +109,8 @@ public class ExaminationService : IExaminationService
 
     public async Task<List<QuestionListItemViewModel>> GetQuestionsAsync(int examId)
     {
-        var questions = await _questionRepository.GetAllAsync();
-
+        var questions = await _questionRepository.GetQuestionsByExamIdAsync(examId);
         return questions
-            .Where(q => q.ExamId == examId)
             .Select(q => new QuestionListItemViewModel
             {
                 Id = q.Id,
@@ -125,5 +119,56 @@ public class ExaminationService : IExaminationService
                 Marks = q.Marks
             })
             .ToList();
+    }
+
+    public async Task<AddQuestionViewModel> GetAddQuestionModel(int examId, int questionId = 0)
+    {
+        Exam exam = await _examRepository.GetByIdAsync(examId);
+        if (exam == null)
+            return new AddQuestionViewModel();
+        Question question = null;
+        if (questionId > 0)
+        {
+            question = await _questionRepository.GetByIdAsync(questionId);
+            if (question == null)
+                return new AddQuestionViewModel();
+        }
+        var exsitingQuestions = await _questionRepository.GetQuestionsByExamIdAsync(examId);
+        var model = new AddQuestionViewModel
+        {
+            ExamId = examId,
+            ExamTitle = exam.Title,
+            QuestionText = question?.QuestionText ?? string.Empty,
+            QuestionType = question?.QuestionType ?? "",
+            Topic = question?.Topic ?? string.Empty,
+            DifficultyLevel = question?.DifficultyLevel ?? "Easy",
+            Marks = question?.Marks ?? 0,
+            Id = question?.Id ?? 0,
+            Options = question?.Options.Select(o => o.OptionText).ToList() ?? new List<string>(),
+            CorrectOptionIndex = question?.Options.FirstOrDefault(o => o.IsCorrect)?.Id ?? 0,
+            ExistingQuestions = exsitingQuestions?.Select(q => new QuestionListItemViewModel
+            {
+                Id = q.Id,
+                QuestionText = q.QuestionText,
+                QuestionType = q.QuestionType,
+                Marks = q.Marks
+            }).ToList() ?? new List<QuestionListItemViewModel>()
+        };
+        return model;
+    }
+
+    public async Task<ExamViewModel> GetEditExamModel(int examId)
+    {
+        var exam = await _examRepository.GetByIdAsync(examId);
+        return exam == null ? null : new ExamViewModel
+        {
+            Id = exam.Id,
+            Title = exam.Title,
+            Description = exam.Description,
+            Duration = (int)exam.DurationMinutes.TotalMinutes,
+            StartDate = exam.StartDate,
+            EndDate = exam.EndDate,
+            TotalMarks = exam.TotalMarks
+        }; 
     }
 }
