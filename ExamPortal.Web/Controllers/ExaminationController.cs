@@ -52,12 +52,15 @@ public class ExaminationController : Controller
     {
         if (!ModelState.IsValid)
         {
-            return Json(new { success = false, message = "Unable to edit exam modal state invalid " });
+            return BadRequest(new { message = "Invalid model state.", errorCode = "ModelStateInvalid" });
         }
-        
+        bool success = await _examinationService.EditExamAsync(model);
+        if (!success)
+        {
+            return BadRequest(new { message = "Exam with the same name already exists.", errorCode = "DuplicateExamName" });
+        }
+        return Ok(new { message = "Exam updated successfully." });
     }
-
-
 
     [HttpGet("AddQuestions")]
     public async Task<IActionResult> AddQuestions(int examId)

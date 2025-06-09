@@ -106,6 +106,32 @@ $(document).ready(function () {
 
 
 
+  $(document).on("submit", "#editExamForm", function (event) {
+    event.preventDefault();
+    if (!$(this).valid()) {
+      return;
+    }
+    var form = $(this);
+    var formData = form.serialize();
+    $.ajax({
+      url: form.attr('action'),
+      type: form.attr('method'),
+      data: formData,
+      success: function (response) {
+        $("#editExamModal").modal("hide");
+        toastr.success("Exam data updated !");
+      },
+      error: function (xhr, status, error) {
+        if (xhr.responseJSON && xhr.responseJSON.errorCode === "DuplicateExamName") {
+          toastr.error('Exam  with the same name already exists.');
+        } else {
+          toastr.error('An unexpected error occurred. Please try again later.');
+
+        }
+      }
+    });
+  });
+
 
 
 });

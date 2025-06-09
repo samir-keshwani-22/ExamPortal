@@ -8,11 +8,12 @@
                 <h5 class="modal-title" id="addExamLabel"><i class="bi bi-journal-plus me-2"></i>Edit Exam</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <form method="post" asp-action="AddExam">
+            <form method="post" id="editExamForm" asp-controller="Examination" asp-action="EditExam">
                 <div class="modal-body">
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Title</label>
+                            <input type="hidden" asp-for="Id">
                             <input asp-for="Title" class="form-control" />
                         </div>
                         <div class="col-md-6">

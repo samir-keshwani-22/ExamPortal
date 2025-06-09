@@ -48,6 +48,7 @@ public partial class ExamPortalContext : DbContext
             entity.HasKey(e => e.Id).HasName("users_pkey");
 
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            // entity.Property(e=>e.)
             entity.Property(e => e.RoleId).HasDefaultValueSql("2");
             entity.Property(e => e.UpdatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
 

@@ -38,6 +38,7 @@ builder.Services.AddScoped<IEmailService>(provider =>
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
+builder.Services.AddScoped<IExamRepository, ExamRepository>();
 
 builder.Services.AddDbContext<ExamPortalContext>(q => q.UseNpgsql(conn));
 

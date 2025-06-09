@@ -25,7 +25,7 @@ public partial class User
     [Column("last_name")]
     [StringLength(255)]
     public string LastName { get; set; } = null!;
-    
+
     [Column("mobile_number")]
     [StringLength(20)]
     public string? MobileNumber { get; set; }
@@ -53,6 +53,8 @@ public partial class User
 
     public int? DeletedBy { get; set; }
     public DateTime? DeletedAt { get; set; }
+
+    // public bool? IsDeleted{}
 
     public ICollection<ExamAttempt> ExamAttempts { get; set; }
     public ICollection<UserSession> UserSessions { get; set; }

@@ -7,7 +7,7 @@ public interface IExaminationService
     public Task<List<ExamViewModel>> GetAllExamsAsync();
     public Task<int> AddExamAsync(ExamViewModel model);
 
-    
+    public Task<bool> EditExamAsync(ExamViewModel model);
 
     public Task AddOrUpdateQuestionAsync(AddQuestionViewModel model);
     public Task<List<QuestionListItemViewModel>> GetQuestionsAsync(int examId);

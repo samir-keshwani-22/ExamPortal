@@ -6,11 +6,11 @@ namespace ExamPortal.BusinessLogic.Implementations;
 
 public class ExaminationService : IExaminationService
 {
-    private readonly IGenericRepository<Exam> _examRepository;
+    private readonly IExamRepository _examRepository;
     private readonly IQuestionRepository _questionRepository;
     private readonly IGenericRepository<QuestionOption> _optionRepository;
 
-    public ExaminationService(IGenericRepository<Exam> examRepository, IGenericRepository<QuestionOption> optionRepository, IQuestionRepository questionRepository)
+    public ExaminationService(IExamRepository examRepository, IGenericRepository<QuestionOption> optionRepository, IQuestionRepository questionRepository)
     {
         _examRepository = examRepository;
         _questionRepository = questionRepository;
@@ -47,6 +47,8 @@ public class ExaminationService : IExaminationService
         await _examRepository.AddAsync(exam);
         return exam.Id;
     }
+
+
 
     public async Task AddOrUpdateQuestionAsync(AddQuestionViewModel model)
     {
@@ -169,6 +171,23 @@ public class ExaminationService : IExaminationService
             StartDate = exam.StartDate,
             EndDate = exam.EndDate,
             TotalMarks = exam.TotalMarks
-        }; 
+        };
+    }
+
+    public async Task<bool> EditExamAsync(ExamViewModel model)
+    {
+        Exam existingExam = await _examRepository.GetExamByNameAsync(model.Title);
+        if (existingExam != null && existingExam.Id != model.Id)
+        {
+            return false;
+        }
+        Exam exam = await _examRepository.GetByIdAsync(model.Id);
+        exam.Title = model.Title;
+        exam.Description = model.Description;
+        exam.DurationMinutes = TimeSpan.FromMinutes(model.Duration);
+        exam.StartDate = model.StartDate;
+        exam.EndDate = model.EndDate;
+        await _examRepository.UpdateAsync(exam);
+        return true;
     }
 }
