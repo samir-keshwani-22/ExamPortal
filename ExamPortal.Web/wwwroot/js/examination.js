@@ -1,4 +1,5 @@
 var examToDeleteId;
+var questionToDeleteId;
 
 function openAddExamModal() {
   $.get("/Examination/AddExam", function (data) {
@@ -9,6 +10,9 @@ function openAddExamModal() {
 
 function deleteExam(examId) {
   examToDeleteId = examId;
+}
+function deleteQuestion(questionId) {
+  questionToDeleteId = questionId;
 }
 
 function fetchExam() {
@@ -21,6 +25,16 @@ function fetchExam() {
   })
 }
 
+async function updateQuestionListPartialView(examId) {
+  const listPartialHtml = await $.ajax({
+    url: '/Examination/GetQuestionListPartial',
+    type: 'GET',
+    data: { examId: examId }
+  });
+  $("#questionListContainer").html(listPartialHtml);
+}
+
+
 function confirmExamDelete() {
   $.ajax({
     url: '/Examination/DeleteExam',
@@ -30,6 +44,7 @@ function confirmExamDelete() {
       if (response.success) {
         $('#deleteExamModal').modal('hide');
         toastr.success('Exam Deleted Successfully');
+        examToDeleteId = null;
         fetchExam();
       } else {
         toastr.error('Failed to delete the exam');
@@ -38,6 +53,28 @@ function confirmExamDelete() {
     error: function (xhr, status, error) {
       toastr.error('An unexpected error occurred. Please try again later.');
       $('#deleteExamModal').modal('hide');
+    }
+  });
+}
+
+function confirmQuestionDelete() {
+  $.ajax({
+    url: '/Examination/DeleteQuestion',
+    type: 'POST',
+    data: { questionId: questionToDeleteId },
+    success: function (response) {
+      if (response.success) {
+        $('#deleteQuestionModal').modal('hide');
+        toastr.success('Question Deleted Successfully');
+        $(`.questions-container li[data-questionid=${questionToDeleteId}]`).hide();
+        questionToDeleteId = null;
+      } else {
+        toastr.error('Failed to delete the question');
+      }
+    },
+    error: function (xhr, status, error) {
+      toastr.error('An unexpected error occurred. Please try again later.');
+      $('#deleteQuestionModal').modal('hide');
     }
   });
 }
@@ -51,11 +88,11 @@ function renderOptions(type) {
       container.append(`
                   <div class="mb-2">
                       <label class="form-label">Option ${i + 1}</label>
-                      <input name="Options[${i}]" class="form-control" placeholder="Option ${i + 1}" />
+                      <input name="Options[${i}]" class="form-control" placeholder="Option ${i + 1}" required/>
                   </div>
               `);
     }
-    $("#correctOptionDiv").show();
+
   } else if (type === "TrueFalse") {
     container.append(`
               <div class="mb-2">
@@ -67,7 +104,7 @@ function renderOptions(type) {
                   <input name="Options[1]" class="form-control" value="False" readonly />
               </div>
           `);
-    $("#correctOptionDiv").show();
+
   }
 }
 
@@ -91,49 +128,40 @@ $(document).ready(function () {
 
   });
 
-
-
   // _QuestionForm.cshtml   
   $(document).on("change", "#questionTypeSelector", function () {
     renderOptions($(this).val());
   });
 
 
-
-  $(document).on("submit", "#questionForm", function (e) {
+  $(document).on("submit", "#questionForm", async function (e) {
     e.preventDefault();
     var form = $(this);
-    $.ajax({
-      url: form.attr("action"),
-      type: "POST",
-      data: form.serialize(),
-      success: function (formPartialHtml) {
-        var examId = $("#ExamId").val();
-        debugger
-        $("#questionFormContainer").html(formPartialHtml);
-        $.ajax({
-          url: '/Examination/GetQuestionListPartial',
-          type: 'GET',
-          data: { examId: examId },
-          success: function (listPartialHtml) {
-            $("#questionListContainer").html(listPartialHtml);
-          },
-          error: function () {
-            alert("An error occurred while loading the question list.");
-          }
-        });
+    try {
+      const formPartialHtml = await $.ajax({
+        url: form.attr("action"),
+        type: "POST",
+        data: form.serialize()
+      });
+      const examId = $("#ExamId").val();
+      $("#questionFormContainer").html(formPartialHtml);
+      $("#questionForm input[type=text], #questionForm textarea").val('');
+      $("#questionForm select").prop('selectedIndex', 0);
+      $("#questionForm input[type=number] ").val(0);
+      $("#dynamicOptions ").empty();
+      $("#correctOptionDiv input").val('');
 
-
-      },
-      error: function () {
-        alert("An error occurred");
-      }
-    });
+      updateQuestionListPartialView(examId);
+    } catch (error) {
+      console.log(error);
+      alert("An error occured while processing the request");
+    }
   })
 
   // _QuestionList.cshtml
 
   $(document).on("click", ".delete-question", function () {
+    const questionId = $(this).data("questionid");
 
   });
 
@@ -153,7 +181,7 @@ $(document).ready(function () {
       type: form.attr('method'),
       data: formData,
       success: function (response) {
-        $("#addExamForm").modal("hide");
+        $("#addExamModal").modal("hide");
         fetchExam();
         toastr.success("Exam added !");
       },
@@ -192,15 +220,6 @@ $(document).ready(function () {
       }
     });
   });
-
-
-
-
-
-
-
-
-
 
 
 });

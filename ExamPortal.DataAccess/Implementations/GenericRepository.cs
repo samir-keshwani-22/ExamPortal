@@ -47,10 +47,10 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         return await _dbSet.FindAsync(id);
     }
 
-    public async Task UpdateAsync(T entity)
+    public async Task<bool> UpdateAsync(T entity)
     {
         _dbSet.Update(entity);
-       await _context.SaveChangesAsync();
+        return await _context.SaveChangesAsync() > 0;
     }
 
 }

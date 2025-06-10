@@ -16,7 +16,7 @@ public class QuestionRepository : GenericRepository<Question>, IQuestionReposito
 
     public async Task<List<Question>> GetQuestionsByExamIdAsync(int examId)
     {
-        return await _examPortalContext.Questions.Where(q => q.ExamId == examId).ToListAsync();
+        return await _examPortalContext.Questions.Where(q => q.ExamId == examId && q.IsDeleted == false).ToListAsync();
     }
 
 }

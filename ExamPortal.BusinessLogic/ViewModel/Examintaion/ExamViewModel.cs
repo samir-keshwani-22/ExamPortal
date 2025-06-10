@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace ExamPortal.BusinessLogic.ViewModel.Examintaion;
@@ -10,6 +11,7 @@ public class ExamViewModel
     [StringLength(100)]
     public string Title { get; set; }
 
+    [Required]
     [StringLength(500)]
     public string Description { get; set; }
 

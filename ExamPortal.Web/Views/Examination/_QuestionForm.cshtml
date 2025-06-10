@@ -2,9 +2,6 @@
 @model AddQuestionViewModel
 
 <div>
-    
-
-
     <form id="questionForm" asp-action="AddOrUpdateQuestion" method="post">
         <input type="hidden" asp-for="Id" />
         <input type="hidden" asp-for="ExamId" />
@@ -27,8 +24,7 @@
         <div class="mb-3">
             <label asp-for="Topic" class="form-label">Topic </label>
             <input asp-for="Topic" class="form-control" />
-        </div>
-
+        </div> 
         <div class="mb-3">
             <label asp-for="DifficultyLevel" class="form-label">Difficulty Level</label>
             <select asp-for="DifficultyLevel" class="form-select">
@@ -59,8 +55,6 @@
         </button>
     </form>
 </div>
-
-
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

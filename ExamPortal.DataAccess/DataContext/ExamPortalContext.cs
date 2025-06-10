@@ -62,6 +62,7 @@ public partial class ExamPortalContext : DbContext
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.Property(e => e.UpdatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.Property(e => e.IsDeleted).HasDefaultValue(false);
+            entity.Property(e => e.TotalMarks).HasDefaultValue(0);
         });
 
         modelBuilder.Entity<Question>(entity =>
@@ -71,6 +72,11 @@ public partial class ExamPortalContext : DbContext
                 entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             }
         );
+        modelBuilder.Entity<QuestionOption>(entity =>
+        {
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.UpdatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
+        });
         modelBuilder.Entity<Answer>()
            .HasOne(a => a.SelectedOption)
            .WithMany()

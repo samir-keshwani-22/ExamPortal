@@ -40,16 +40,13 @@ public class ExaminationController : Controller
     {
         if (!ModelState.IsValid)
             return BadRequest(new { message = "ModalState invalid .", errorCode = "ModelStateInvalid" });
-
-
         if (await _examinationService.CheckExamExistsAsync(model.Title))
         {
             return BadRequest(new { message = "Exam with the same name already exists.", errorCode = "DuplicateExamName" });
         }
-
         var examId = await _examinationService.AddExamAsync(model);
         if (examId > 0)
-            return RedirectToAction("AddQuestions", new { examId });
+            return Ok(new { message = "Exam added successfully." });
 
         ModelState.AddModelError("", "Something went wrong");
         return View(model);
@@ -77,14 +74,6 @@ public class ExaminationController : Controller
         return Ok(new { message = "Exam updated successfully." });
     }
 
-    [HttpGet("AddQuestions")]
-    public async Task<IActionResult> AddQuestions(int examId)
-    {
-        var model = await _examinationService.GetAddQuestionModel(examId);
-        return View(model);
-    }
-
-
     [HttpPost("DeleteExam")]
 
     public async Task<IActionResult> DeleteExam(int id)
@@ -98,7 +87,12 @@ public class ExaminationController : Controller
 
     }
 
-
+    [HttpGet("AddQuestions")]
+    public async Task<IActionResult> AddQuestions(int examId)
+    {
+        var model = await _examinationService.GetAddQuestionModel(examId);
+        return View(model);
+    }
 
     [HttpPost("AddOrUpdateQuestion")]
     public async Task<IActionResult> AddOrUpdateQuestion(AddQuestionViewModel model)
@@ -108,8 +102,17 @@ public class ExaminationController : Controller
             return PartialView("_QuestionFormPartial", model);
         }
         await _examinationService.AddOrUpdateQuestionAsync(model);
-        var modelAddQuestion = await _examinationService.GetAddQuestionModel(model.ExamId);
+        var modelAddQuestion = await _examinationService.GetAddQuestionModel(model.ExamId, 0);
         return PartialView("_QuestionForm", modelAddQuestion);
+    }
+
+    [HttpPost("DeleteQuestion")]
+    public async Task<IActionResult> DeleteQuestion(int questionId)
+    {
+        var result = await _examinationService.DeleteQuestionAsync(questionId);
+        if (result == false)
+            return BadRequest(new { message = "Unable to delete the question." });
+        return Json(new { success = true });
     }
 
     [HttpGet("GetQuestionListPartial")]
@@ -118,7 +121,4 @@ public class ExaminationController : Controller
         var questions = await _examinationService.GetQuestionsAsync(examId);
         return PartialView("_QuestionList", questions);
     }
-
-
-
 }

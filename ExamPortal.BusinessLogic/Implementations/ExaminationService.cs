@@ -8,9 +8,9 @@ public class ExaminationService : IExaminationService
 {
     private readonly IExamRepository _examRepository;
     private readonly IQuestionRepository _questionRepository;
-    private readonly IGenericRepository<QuestionOption> _optionRepository;
+    private readonly IQuestionOptionRepository _optionRepository;
 
-    public ExaminationService(IExamRepository examRepository, IGenericRepository<QuestionOption> optionRepository, IQuestionRepository questionRepository)
+    public ExaminationService(IExamRepository examRepository, IQuestionOptionRepository optionRepository, IQuestionRepository questionRepository)
     {
         _examRepository = examRepository;
         _questionRepository = questionRepository;
@@ -53,6 +53,7 @@ public class ExaminationService : IExaminationService
     public async Task AddOrUpdateQuestionAsync(AddQuestionViewModel model)
     {
         Question question;
+        var exam = await _examRepository.GetByIdAsync(model.ExamId);
         if (model.Id > 0)
         {
             question = await _questionRepository.GetByIdAsync(model.Id);
@@ -67,14 +68,14 @@ public class ExaminationService : IExaminationService
 
             await _questionRepository.UpdateAsync(question);
             // fixing this is left 
-            var existingOptions = (await _optionRepository.GetAllAsync())
-                                  .Where(o => o.QuestionId == question.Id)
-                                  .ToList();
-
+            var existingOptions = await _optionRepository.GetOptionsByQuestionIdAsync(model.Id);
             foreach (var opt in existingOptions)
             {
                 await _optionRepository.DeleteAsync(opt.Id);
             }
+            int oldMarks = question.Marks;
+            int newMarks = model.Marks;
+            exam.TotalMarks = exam.TotalMarks - oldMarks + newMarks;
         }
         else
         {
@@ -91,9 +92,11 @@ public class ExaminationService : IExaminationService
 
             await _questionRepository.AddAsync(question);
             model.Id = question.Id;
+            exam.TotalMarks += model.Marks;
         }
+        // update the marks entry in the exam table 
+        await _examRepository.UpdateAsync(exam);
 
-        // Add new options one by one
         for (int i = 0; i < model.Options.Count; i++)
         {
             var optionText = model.Options[i];
@@ -108,6 +111,8 @@ public class ExaminationService : IExaminationService
                 await _optionRepository.AddAsync(option);
             }
         }
+
+
     }
 
     public async Task<List<QuestionListItemViewModel>> GetQuestionsAsync(int examId)
@@ -209,5 +214,12 @@ public class ExaminationService : IExaminationService
         if (exam != null)
             return true;
         return false;
+    }
+
+    public async Task<bool> DeleteQuestionAsync(int questionId)
+    {
+        var question = await _questionRepository.GetByIdAsync(questionId);
+        question.IsDeleted = true;
+        return await _questionRepository.UpdateAsync(question);
     }
 }

@@ -20,6 +20,8 @@ public interface IExaminationService
 
     public Task<bool> CheckExamExistsAsync(string name);
 
+    public Task<bool> DeleteQuestionAsync(int questionId);
+
 
 
 }
