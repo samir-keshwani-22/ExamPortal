@@ -11,6 +11,7 @@ function openAddExamModal() {
 function deleteExam(examId) {
   examToDeleteId = examId;
 }
+
 function deleteQuestion(questionId) {
   questionToDeleteId = questionId;
 }
@@ -33,8 +34,7 @@ async function updateQuestionListPartialView(examId) {
   });
   $("#questionListContainer").html(listPartialHtml);
 }
-
-
+ 
 function confirmExamDelete() {
   $.ajax({
     url: '/Examination/DeleteExam',
@@ -79,6 +79,10 @@ function confirmQuestionDelete() {
   });
 }
 
+function checkForDateValidation(startDate, endDate) {
+  return startDate < endDate;
+}
+
 
 function renderOptions(type) {
   const container = $("#dynamicOptions");
@@ -94,7 +98,6 @@ function renderOptions(type) {
                   </div>
               `);
     }
-
   } else if (type === "TrueFalse") {
     container.append(`
               <div class="mb-2">
@@ -106,7 +109,6 @@ function renderOptions(type) {
                   <input name="Options[1]" class="form-control" value="False" readonly />
               </div>
           `);
-
   }
 }
 
@@ -116,7 +118,6 @@ $(document).ready(function () {
 
   $(document).on("click", ".edit-exam-icon", function () {
     var examId = $(this).data("exam-id");
-    debugger
     $.ajax({
       url: "/Examination/EditExam",
       type: "GET",
@@ -125,7 +126,6 @@ $(document).ready(function () {
         $("#editExamContainer").html(data);
         $("#editExamModal").modal("show");
       }
-
     });
 
   });
@@ -134,8 +134,7 @@ $(document).ready(function () {
   $(document).on("change", "#questionTypeSelector", function () {
     renderOptions($(this).val());
   });
-
-
+ 
   $(document).on("submit", "#questionForm", async function (e) {
     e.preventDefault();
     var form = $(this);
@@ -165,7 +164,6 @@ $(document).ready(function () {
 
   $(document).on("click", ".delete-question", function () {
     const questionId = $(this).data("questionid");
-
   });
 
   $(document).on("click", ".edit-question", function () {
@@ -182,6 +180,11 @@ $(document).ready(function () {
 
   $(document).on("submit", "#addExamForm", function (event) {
     event.preventDefault();
+    var result = checkForDateValidation($("#startDate").val(), $("#endDate").val());
+    if (result == false) {
+      toastr.error('Enter the valid start and end date.');
+      return;
+    }
     if (!$(this).valid()) {
       return;
     }
@@ -208,6 +211,11 @@ $(document).ready(function () {
 
   $(document).on("submit", "#editExamForm", function (event) {
     event.preventDefault();
+    var result = checkForDateValidation($("#startDate").val(), $("#endDate").val());
+    if (result == false) {
+      toastr.error('Enter the valid start and end date.');
+      return;
+    }
     if (!$(this).valid()) {
       return;
     }

@@ -1,8 +1,10 @@
 using ExamPortal.BusinessLogic.Interfaces;
 using ExamPortal.BusinessLogic.ViewModel.Examintaion;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace ExamPortal.Web.Controllers;
 
+[Authorize(Roles = "admin")]
 [Route("[controller]")]
 public class ExaminationController : Controller
 {
@@ -41,6 +43,7 @@ public class ExaminationController : Controller
         {
             return BadRequest(new { message = "Exam with the same name already exists.", errorCode = "DuplicateExamName" });
         }
+        
         var examId = await _examinationService.AddExamAsync(model);
         if (examId > 0)
             return Ok(new { message = "Exam added successfully." });

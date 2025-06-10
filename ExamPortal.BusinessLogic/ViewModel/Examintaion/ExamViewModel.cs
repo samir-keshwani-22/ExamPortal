@@ -6,7 +6,6 @@ namespace ExamPortal.BusinessLogic.ViewModel.Examintaion;
 public class ExamViewModel
 {
     public int Id { get; set; }
-
     [Required]
     [StringLength(100)]
     public string Title { get; set; }
@@ -33,6 +32,4 @@ public class ExamViewModel
 
     [Range(1, int.MaxValue, ErrorMessage = "Total marks must be greater than 0")]
     public int? TotalMarks { get; set; }
-
-
 }
