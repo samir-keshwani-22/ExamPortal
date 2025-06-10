@@ -34,7 +34,7 @@ public class ExaminationService : IExaminationService
 
     public async Task<int> AddExamAsync(ExamViewModel model)
     {
-        var exam = new Exam
+        Exam exam = new Exam
         {
             Title = model.Title,
             Description = model.Description,
@@ -48,26 +48,21 @@ public class ExaminationService : IExaminationService
         return exam.Id;
     }
 
-
-
     public async Task AddOrUpdateQuestionAsync(AddQuestionViewModel model)
     {
         Question question;
-        var exam = await _examRepository.GetByIdAsync(model.ExamId);
+        Exam exam = await _examRepository.GetByIdAsync(model.ExamId);
         if (model.Id > 0)
         {
             question = await _questionRepository.GetByIdAsync(model.Id);
             if (question == null) return;
-
             question.QuestionText = model.QuestionText;
             question.QuestionType = model.QuestionType;
             question.Topic = model.Topic;
             question.DifficultyLevel = model.DifficultyLevel;
             question.Marks = model.Marks;
             question.UpdatedAt = DateTime.UtcNow;
-
             await _questionRepository.UpdateAsync(question);
-            // fixing this is left 
             var existingOptions = await _optionRepository.GetOptionsByQuestionIdAsync(model.Id);
             foreach (var opt in existingOptions)
             {
@@ -96,7 +91,6 @@ public class ExaminationService : IExaminationService
         }
         // update the marks entry in the exam table 
         await _examRepository.UpdateAsync(exam);
-
         for (int i = 0; i < model.Options.Count; i++)
         {
             var optionText = model.Options[i];
@@ -111,8 +105,6 @@ public class ExaminationService : IExaminationService
                 await _optionRepository.AddAsync(option);
             }
         }
-
-
     }
 
     public async Task<List<QuestionListItemViewModel>> GetQuestionsAsync(int examId)
@@ -142,6 +134,7 @@ public class ExaminationService : IExaminationService
                 return new AddQuestionViewModel();
         }
         var exsitingQuestions = await _questionRepository.GetQuestionsByExamIdAsync(examId);
+        var options = await _optionRepository.GetOptionsByQuestionIdAsync(questionId);
         var model = new AddQuestionViewModel
         {
             ExamId = examId,
@@ -152,8 +145,8 @@ public class ExaminationService : IExaminationService
             DifficultyLevel = question?.DifficultyLevel ?? "Easy",
             Marks = question?.Marks ?? 0,
             Id = question?.Id ?? 0,
-            Options = question?.Options.Select(o => o.OptionText).ToList() ?? new List<string>(),
-            CorrectOptionIndex = question?.Options.FirstOrDefault(o => o.IsCorrect)?.Id ?? 0,
+            Options = options.Select(o => o.OptionText).ToList() ?? new List<string>(),
+            CorrectOptionIndex = options.FirstOrDefault(o => o.IsCorrect)?.Id ?? 0,
             ExistingQuestions = exsitingQuestions?.Select(q => new QuestionListItemViewModel
             {
                 Id = q.Id,
@@ -161,6 +154,36 @@ public class ExaminationService : IExaminationService
                 QuestionType = q.QuestionType,
                 Marks = q.Marks
             }).ToList() ?? new List<QuestionListItemViewModel>()
+        };
+        return model;
+    }
+
+    public async Task<AddQuestionViewModel> GetEditQuestionModel(int questionId)
+    {
+        Question question = null;
+        if (questionId > 0)
+        {
+            question = await _questionRepository.GetByIdAsync(questionId);
+            if (question == null)
+                return new AddQuestionViewModel();
+        }
+        int examId = question.ExamId;
+        Exam exam = await _examRepository.GetByIdAsync(examId);
+        if (exam == null)
+            return new AddQuestionViewModel();
+
+        var options = await _optionRepository.GetOptionsByQuestionIdAsync(questionId);
+        var model = new AddQuestionViewModel
+        {
+            ExamId = examId,
+            ExamTitle = exam.Title,
+            QuestionText = question.QuestionText,
+            QuestionType = question.QuestionType,
+            Topic = question.Topic,
+            DifficultyLevel = question.DifficultyLevel,
+            Marks = question.Marks,
+            Id = question.Id,
+            Options = options.Select(o => o.OptionText).ToList()
         };
         return model;
     }
@@ -193,8 +216,7 @@ public class ExaminationService : IExaminationService
         exam.DurationMinutes = TimeSpan.FromMinutes(model.Duration);
         exam.StartDate = model.StartDate;
         exam.EndDate = model.EndDate;
-        await _examRepository.UpdateAsync(exam);
-        return true;
+        return await _examRepository.UpdateAsync(exam);
     }
     public async Task<bool> DeleteExamAsync(int examId)
     {
@@ -204,8 +226,7 @@ public class ExaminationService : IExaminationService
             return false;
         }
         exam.IsDeleted = true;
-        await _examRepository.UpdateAsync(exam);
-        return true;
+        return await _examRepository.UpdateAsync(exam);
     }
 
     public async Task<bool> CheckExamExistsAsync(string name)
@@ -219,7 +240,11 @@ public class ExaminationService : IExaminationService
     public async Task<bool> DeleteQuestionAsync(int questionId)
     {
         var question = await _questionRepository.GetByIdAsync(questionId);
+        var exam = await _examRepository.GetByIdAsync(question.ExamId);
+        exam.TotalMarks -= question.Marks;
         question.IsDeleted = true;
         return await _questionRepository.UpdateAsync(question);
     }
+
+
 }

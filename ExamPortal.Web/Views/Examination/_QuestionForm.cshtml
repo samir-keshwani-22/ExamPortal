@@ -1,6 +1,6 @@
 @using ExamPortal.BusinessLogic.ViewModel.Examintaion
 @model AddQuestionViewModel
-
+<partial name="_ValidationScriptsPartial" />
 <div>
     <form id="questionForm" asp-action="AddOrUpdateQuestion" method="post">
         <input type="hidden" asp-for="Id" />
@@ -24,7 +24,7 @@
         <div class="mb-3">
             <label asp-for="Topic" class="form-label">Topic </label>
             <input asp-for="Topic" class="form-control" />
-        </div> 
+        </div>
         <div class="mb-3">
             <label asp-for="DifficultyLevel" class="form-label">Difficulty Level</label>
             <select asp-for="DifficultyLevel" class="form-select">
@@ -42,21 +42,24 @@
         </div>
 
         <div id="dynamicOptions">
+            @if (Model.Options != null && Model.Options.Any())
+            {
+                for (int i = 0; i < Model.Options.Count; i++)
+                {
+                    <div class="mb-2">
+                        <label class="form-label">Option @(i + 1)</label>
+                        <input name="Options[@i]" class="form-control" value="@Model.Options[i]" @(Model.QuestionType=="TrueFalse" ? "readonly" : "")/>
+                    </div>
+                }
+            }
         </div>
-
         <div class="mb-3" id="correctOptionDiv">
             <label asp-for="CorrectOptionIndex" class="form-label">Correct Option Number</label>
             <input asp-for="CorrectOptionIndex" class="form-control" type="number" />
             <span asp-validation-for="CorrectOptionIndex" class="text-danger"></span>
-        </div>
-
+        </div> 
         <button type="submit" class="btn   primary-button">
             @(Model.Id > 0 ? "Update Question" : "Add Question")
         </button>
     </form>
 </div>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-
-}

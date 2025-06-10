@@ -5,7 +5,7 @@
 }
 <script src="~/js/examination.js"></script>
 
-<div class="container mt-4">
+<div class="container-fluid  px-2 px-md-5 mt-4">
     <div class="heading-content py-2  d-flex flex-column flex-md-row justify-content-between">
         <div class="heading-left fw-bolder">
 
@@ -21,7 +21,7 @@
             </a>
         </div>
     </div>
-    <div id="questionFormContainer"> 
+    <div id="questionFormContainer">
         @await Html.PartialAsync("_QuestionForm", Model)
     </div>
     <div id="questionListContainer" class="py-2">

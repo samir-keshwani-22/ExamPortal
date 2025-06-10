@@ -66,7 +66,7 @@ function confirmQuestionDelete() {
       if (response.success) {
         $('#deleteQuestionModal').modal('hide');
         toastr.success('Question Deleted Successfully');
-        $(`.questions-container li[data-questionid=${questionToDeleteId}]`).hide();
+        $(`.questions-container li[data-questionid="${questionToDeleteId}"]`).remove();
         questionToDeleteId = null;
       } else {
         toastr.error('Failed to delete the question');
@@ -82,6 +82,8 @@ function confirmQuestionDelete() {
 
 function renderOptions(type) {
   const container = $("#dynamicOptions");
+  // const hasOptions = container.children().length > 0;
+  // if (hasOptions) return;
   container.empty();
   if (type === "MCQ") {
     for (let i = 0; i < 4; i++) {
@@ -145,10 +147,11 @@ $(document).ready(function () {
       });
       const examId = $("#ExamId").val();
       $("#questionFormContainer").html(formPartialHtml);
+
       $("#questionForm input[type=text], #questionForm textarea").val('');
       $("#questionForm select").prop('selectedIndex', 0);
-      $("#questionForm input[type=number] ").val(0);
-      $("#dynamicOptions ").empty();
+      $("#questionForm input[type=number]").val(0);
+      $("#dynamicOptions").empty();
       $("#correctOptionDiv input").val('');
 
       updateQuestionListPartialView(examId);
@@ -166,7 +169,15 @@ $(document).ready(function () {
   });
 
   $(document).on("click", ".edit-question", function () {
-
+    const questionId = $(this).data("questionid");
+    $.ajax({
+      url: `/Examination/EditQuestion`,
+      type: 'GET',
+      data: { questionId: questionId },
+      success: function (data) {
+        $("#questionFormContainer").html(data);
+      }
+    })
   });
 
   $(document).on("submit", "#addExamForm", function (event) {

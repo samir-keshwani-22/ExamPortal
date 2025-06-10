@@ -15,7 +15,7 @@ namespace ExamPortal.DataAccess.Implementations
 
         public async Task<List<QuestionOption>> GetOptionsByQuestionIdAsync(int questionId)
         {
-            return await _examPortalContext.QuestionOptions.Where(q => q.QuestionId == questionId).ToListAsync();
+            return await _examPortalContext.QuestionOptions.Where(q => q.QuestionId == questionId).OrderBy(q => q.OptionText).ToListAsync();
         }
 
     }

@@ -1,9 +1,7 @@
 using ExamPortal.BusinessLogic.Interfaces;
 using ExamPortal.BusinessLogic.ViewModel.Examintaion;
 using Microsoft.AspNetCore.Mvc;
-
 namespace ExamPortal.Web.Controllers;
-
 
 [Route("[controller]")]
 public class ExaminationController : Controller
@@ -31,7 +29,6 @@ public class ExaminationController : Controller
     [HttpGet("AddExam")]
     public IActionResult AddExam()
     {
-        var model = new ExamViewModel();
         return PartialView("_AddExamModal", new ExamViewModel());
     }
 
@@ -47,7 +44,6 @@ public class ExaminationController : Controller
         var examId = await _examinationService.AddExamAsync(model);
         if (examId > 0)
             return Ok(new { message = "Exam added successfully." });
-
         ModelState.AddModelError("", "Something went wrong");
         return View(model);
     }
@@ -94,6 +90,13 @@ public class ExaminationController : Controller
         return View(model);
     }
 
+    [HttpGet("EditQuestion")]
+    public async Task<IActionResult> EditQuestions(int questionId)
+    {
+        var model = await _examinationService.GetEditQuestionModel(questionId);
+        return PartialView("_QuestionForm", model);
+    }
+
     [HttpPost("AddOrUpdateQuestion")]
     public async Task<IActionResult> AddOrUpdateQuestion(AddQuestionViewModel model)
     {
@@ -102,7 +105,7 @@ public class ExaminationController : Controller
             return PartialView("_QuestionFormPartial", model);
         }
         await _examinationService.AddOrUpdateQuestionAsync(model);
-        var modelAddQuestion = await _examinationService.GetAddQuestionModel(model.ExamId, 0);
+        AddQuestionViewModel modelAddQuestion = await _examinationService.GetAddQuestionModel(model.ExamId, 0);
         return PartialView("_QuestionForm", modelAddQuestion);
     }
 
