@@ -1,0 +1,101 @@
+@using ExamPortal.BusinessLogic.ViewModel.Profile
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+
+<link rel="stylesheet" href="~/css/profile-page.css" />
+@model MyProfileViewModel
+
+<partial name="_ValidationScriptsPartial" />
+
+<div class="container-fluid">
+    <div class="card mt-4    ">
+        <img class="card-img-top" src="~/img/profile-bg-img1.png" alt="Card image cap">
+        <form method="post" asp-action="EditProfile" asp-controller="Profile" enctype="multipart/form-data">
+            <div class="card-body little-profile text-center">
+                <input type="hidden" asp-for="Email" />
+                <input type="hidden" asp-for="ProfileImage" />
+                <div>
+                    <div class="pro-img">
+                        <img id="profileImagePreview" src="@Model.ProfileImage" alt="user">
+                    </div>
+                    <img id="cameraIcon" src="~/img/logos/camera.svg" class="bg-white rounded-circle p-1  "
+                        style=" object-fit:cover;width:40px;   transform: translate(111%, -144%)" alt="">
+
+                    <input type="file" id="profileImageInput" name="ProfileImageFile" accept="image/*"
+                        style="display: none;" />
+                </div>
+                <h3 class="m-b-0">@Model.FirstName @Model.LastName </h3>
+                <p>@Model.Email</p>
+                <div class="row text-center m-t-20">
+                    <div class="row px-3">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input asp-for="FirstName" class="form-control" id="firstName" placeholder="First Name">
+                                <label for="firstName">First Name</label>
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input asp-for="LastName" class="form-control" id="lastName" placeholder="Last Name">
+                                <label for="lastName">Last Name</label>
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row px-3">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input asp-for="Phonenumber" class="form-control" id="phone" placeholder="Phone">
+                                <label for="phone">Phone</label>
+                                <span asp-validation-for="Phonenumber" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input asp-for="Zipcode" type="text" class="form-control" id="zipcode"
+                                    placeholder="Zipcode">
+                                <label for="zipcode">Zipcode</label>
+                                <span asp-validation-for="Zipcode" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row px-3">
+                        <div class="col-md-12 mb-3">
+                            <div class="form-floating">
+                                <textarea asp-for="Address" class="form-control" id="address" placeholder="Address"
+                                    rows="3"></textarea>
+                                <label for="address">Address</label>
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row px-3">
+                        <div class="d-flex justify-content-center gap-2 py-2">
+                            <button type="submit" class="btn   primary-button-v1 ">Save</button>
+                            <a asp-controller="Home" asp-action="Index" type="button"
+                                class="btn btn-outline-primary">Cancel</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $("#cameraIcon").click(function () {
+            $('#profileImageInput').click();
+        });
+        $('#profileImageInput').change(function () {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#profileImagePreview').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(this.files[0]);
+        });
+    });
+</script>

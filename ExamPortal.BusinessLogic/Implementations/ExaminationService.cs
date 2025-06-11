@@ -28,7 +28,9 @@ public class ExaminationService : IExaminationService
             Duration = (int)e.DurationMinutes.TotalMinutes,
             TotalMarks = e.TotalMarks,
             StartDate = e.StartDate,
-            EndDate = e.EndDate
+            EndDate = e.EndDate,
+            TotalQuestion = _questionRepository.GetQuestionsByExamIdAsync(e.Id).Result.Count,
+            ExamStatus = (e.EndDate <= DateTime.Now) ? "Completed" : (e.StartDate >= DateTime.Now) ? "Upcoming" : "Active"
         }).ToList();
     }
 

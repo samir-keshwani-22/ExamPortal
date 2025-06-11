@@ -35,34 +35,34 @@
                                     <i class="fas fa-tachometer-alt pe-2"></i>Dashboard
                                 </a>
                             </li>
+                            @* @if (User.FindFirstValue(ClaimTypes.Role) == "admin")
+                            { *@
+                            <li class="sidebar-item">
+                                <a asp-action="UserList" asp-controller="User"
+                                    class="sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "User" ? "active" : "")">
+                                    <i class="fas fa-user pe-2"></i>Users
+                                </a>
+                            </li>
+                            @* }
                             @if (User.FindFirstValue(ClaimTypes.Role) == "admin")
-                            {
-                                <li class="sidebar-item">
-                                    <a asp-action="UserList" asp-controller="User"
-                                        class="sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "User" ? "active" : "")">
-                                        <i class="fas fa-user pe-2"></i>Users
-                                    </a>
-                                </li>
-                            }
-                            @if (User.FindFirstValue(ClaimTypes.Role) == "admin")
-                            {
-                                <li class="sidebar-item">
-                                    <a asp-action="Index" asp-controller="Examination"
-                                        class="sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "Examination" ? "active" : "")">
-                                        <i class="bi bi-journal-album pe-2"></i>Examination
-                                    </a>
-                                </li>
-                            }
+                            { *@
+                            <li class="sidebar-item">
+                                <a asp-action="Index" asp-controller="Examination"
+                                    class="sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "Examination" ? "active" : "")">
+                                    <i class="bi bi-journal-album pe-2"></i>Examination
+                                </a>
+                            </li>
+                            @* }
                             @if (User.FindFirstValue(ClaimTypes.Role) == "student")
-                            {
-                                <li class="sidebar-item">
-                                    <a asp-action="" asp-controller=""
-                                        class="sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "Exam" ? "active" : "")">
-                                        <i class="bi bi-clipboard2-check-fill pe-2"></i>
-                                        Exams
-                                    </a>
-                                </li>
-                            }
+                            { *@
+                            <li class="sidebar-item">
+                                <a asp-action="Index" asp-controller="Exams"
+                                    class="sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "Exams" ? "active" : "")">
+                                    <i class="bi bi-clipboard2-check-fill pe-2"></i>
+                                    Exams
+                                </a>
+                            </li>
+                            @* } *@
                         </ul>
                     </div>
                 </aside>
@@ -96,10 +96,17 @@
                             </li>
                             <hr class="my-1" />
                             <li>
-                                <a asp-action="MyProfile" asp-controller="Profile"
+                                <a asp-action="Index" asp-controller="Profile"
                                     class="dropdown-item d-flex align-items-center text-secondary">
                                     <i class="fa-solid fa-circle-user me-2"></i><span class="fw-semibold">My
                                         Profile</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a onclick="getChangePasswordModal()"
+                                    class="dropdown-item d-flex align-items-center text-secondary">
+                                    <i class="bi bi-key-fill  me-2"></i><span class="fw-semibold">Change
+                                        Password</span> 
                                 </a>
                             </li>
                             <li>
@@ -119,6 +126,10 @@
         </div>
     </div>
 
+    <div id="changePasswordContainer">
+
+    </div>
+
     <!-- Offcanvas Sidebar for Mobile -->
 
     <div class="offcanvas offcanvas-start" id="mobileSidebar">
@@ -136,7 +147,6 @@
                         class="sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "Home" ? "active" : "")"><i
                             class="fas fa-tachometer-alt pe-2"></i>Dashboard</a>
                 </li>
-
                 <li class="sidebar-item"><a asp-action="UserList" asp-controller="User"
                         class="sidebar-link  @(ViewContext.RouteData.Values["controller"].ToString() == "User" ? "active" : "") "><i
                             class="fas fa-user pe-2"></i>Users</a></li>
@@ -216,6 +226,7 @@
             }
         });
     </script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

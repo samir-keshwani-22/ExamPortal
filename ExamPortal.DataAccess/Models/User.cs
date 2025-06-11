@@ -26,6 +26,13 @@ public partial class User
     [StringLength(255)]
     public string LastName { get; set; } = null!;
 
+    [StringLength(500)]
+    public string? Address { get; set; }
+    
+    [Column("zipcode")]
+    [StringLength(10)]
+    public string? Zipcode { get; set; }
+
     [Column("mobile_number")]
     [StringLength(20)]
     public string? MobileNumber { get; set; }

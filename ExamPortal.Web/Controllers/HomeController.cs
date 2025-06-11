@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ExamPortal.Web.Models;
 namespace ExamPortal.Web.Controllers;
-
-
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;

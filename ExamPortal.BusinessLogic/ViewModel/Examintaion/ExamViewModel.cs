@@ -32,4 +32,7 @@ public class ExamViewModel
 
     [Range(1, int.MaxValue, ErrorMessage = "Total marks must be greater than 0")]
     public int? TotalMarks { get; set; }
+    public int? TotalQuestion { get; set; }
+    public string? ExamStatus { get; set; }
+
 }

@@ -25,14 +25,13 @@
                     <td class="text-center">@exam.StartDate.ToString("dd MMM yyyy")</td>
                     <td class="text-center">@exam.EndDate.ToString("dd MMM yyyy")</td>
                     <td class="text-center">
-
                         <i data-toggle="tooltip" data-placement="bottom" title="Edit the exam" role="button"
                             class="fa-solid fa-pen bg-black mx-2 edit-exam-icon primary-color" data-exam-id="@exam.Id"></i>
                         <i data-toggle="tooltip" data-placement="bottom" title="Delete the question" role="button"
                             class="fa-solid fa-trash mx-2 primary-color" data-bs-toggle="modal"
                             data-bs-target="#deleteExamModal" onclick="deleteExam(@exam.Id)"></i>
                         <i data-toggle="tooltip" data-placement="bottom" title="Edit the question" role="button"
-                            onclick="location.href='@Url.Action( "AddQuestions","Examination", new { examId = @exam.Id })'"
+                            onclick="location.href='@Url.Action("AddQuestions", "Examination", new { examId = @exam.Id })'"
                             class="bi bi-patch-question-fill mx-2 primary-color"></i>
                     </td>
                 </tr>

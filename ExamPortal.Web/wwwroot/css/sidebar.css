@@ -76,6 +76,7 @@ li {
 
 .sidebar-item .sidebar-link.active {
     color: var(--primary_color);
+    background-color: aliceblue;
 }
 
 .main {
@@ -110,7 +111,7 @@ li {
 }
 
 .sidebar-container {
-    width: 250px; 
+    width: 250px;
     transition: all 0.3s ease-in-out;
 }
 
