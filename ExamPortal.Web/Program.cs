@@ -14,29 +14,19 @@ using Microsoft.IdentityModel.Tokens;
 var builder = WebApplication.CreateBuilder(args);
 
 var webHostEnviroment = builder.Services.BuildServiceProvider().GetRequiredService<IWebHostEnvironment>();
-
-// var webHostEnviroment = builder.Environment;
-
 var conn = builder.Configuration.GetConnectionString("my_connection");
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-
-
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IExaminationService, ExaminationService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 
-
-// i need to pass the root folder path so used this way injecion
-
+// i need to pass the root folder path so used this way injecion 
 builder.Services.AddScoped<IEmailService>(provider =>
     new EmailService(provider.GetRequiredService<IConfiguration>(), webHostEnviroment.WebRootPath));
-
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 builder.Services.AddScoped<IExamRepository, ExamRepository>();
@@ -63,7 +53,6 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(key)
     };
-
     // Read token from cookie
     options.Events = new JwtBearerEvents
     {
@@ -108,18 +97,14 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 var app = builder.Build();
-
-
 app.UseStatusCodePages(async context =>
             {
                 var response = context.HttpContext.Response;
-
                 if (response.StatusCode == (int)HttpStatusCode.Unauthorized)
                     response.Redirect("/Account/Login");
                 else if (response.StatusCode == (int)HttpStatusCode.Forbidden)
                     response.Redirect("/Error/AccessDeniedPage");
             });
-
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -136,7 +121,6 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

@@ -106,7 +106,7 @@
                                 <a onclick="getChangePasswordModal()"
                                     class="dropdown-item d-flex align-items-center text-secondary">
                                     <i class="bi bi-key-fill  me-2"></i><span class="fw-semibold">Change
-                                        Password</span> 
+                                        Password</span>
                                 </a>
                             </li>
                             <li>
@@ -202,8 +202,8 @@
             if (warning) toastr.warning(warning);
             if (info) toastr.info(info);
 
-            @* $.ajax({
-                url: "/User/GetUsernameAndImage",
+            $.ajax({
+                url: "/Profile/GetNameAndImage",
                 type: "GET",
                 success: function (response) {
                     if (response.success) {
@@ -215,7 +215,7 @@
                 error: function () {
                     console.log("Failed to load user profile.");
                 }
-            }); *@
+            });
         });
 
         document.getElementById("toggleSidebar").addEventListener("click", function () {

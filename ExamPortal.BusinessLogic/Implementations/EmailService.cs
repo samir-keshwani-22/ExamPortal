@@ -30,12 +30,9 @@ public class EmailService : IEmailService
             mailMessage.To.Add(to);
             mailMessage.Subject = subject;
             mailMessage.IsBodyHtml = true;
-
             string templatePath = Path.Combine(_webRootPath, "Template", "ForgetPasswordEmailTemplate.cshtml");
             string mailBody = File.ReadAllText(templatePath);
-
             mailBody = mailBody.Replace("{{resetLink}}", resetLink);
-
             AlternateView avHtml = AlternateView.CreateAlternateViewFromString(mailBody, null, "text/html");
             LinkedResource logo = new LinkedResource(Path.Combine(_webRootPath, "img", "logos", "examportal-logo-transparent.png"), "image/png")
             {

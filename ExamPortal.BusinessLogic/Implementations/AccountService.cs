@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using ExamPortal.BusinessLogic.Interfaces;
 using ExamPortal.BusinessLogic.ViewModel.Account;
 using ExamPortal.DataAccess.Interfaces;
@@ -21,19 +22,15 @@ public class AccountService : IAccountService
     public async Task<bool> RegisterAsync(RegistrationViewModel model)
     {
         if (model == null)
-
         {
             throw new ArgumentNullException(nameof(model), "Registration model cannot be null ");
-
         }
-        var existingUsers = await _userRepository.GetByEmailAsync(model.Email);
-
+        User existingUsers = await _userRepository.GetByEmailAsync(model.Email);
         if (existingUsers != null)
         {
-
             return false;
         }
-        var user = new User
+        User user = new User
         {
             Email = model.Email,
             FirstName = model.FirstName,
@@ -47,12 +44,12 @@ public class AccountService : IAccountService
 
     public async Task<string> LoginAsync(LoginViewModel model)
     {
-        var user = await _userRepository.GetByEmailAsync(model.Email);
+        User user = await _userRepository.GetByEmailAsync(model.Email);
         if (user == null || (!BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash)))
         {
             return null;
         }
-        var token = _jwtService.GenerateToken(user.Email, user.Role.Name, model.RememberMe);
+        string token = _jwtService.GenerateToken(user.Email, user.Role.Name, model.RememberMe);
         return token;
     }
 
@@ -64,7 +61,6 @@ public class AccountService : IAccountService
             return false;
         }
         string resetToken = _jwtService.GenerateToken(user.Email, isPasswordReset: true);
-
         user.ResetToken = resetToken;
         await _userRepository.UpdateAsync(user);
         string resetLink = urlHelper.Action("ResetPassword", "Account", new { token = resetToken }, "http");
@@ -74,8 +70,8 @@ public class AccountService : IAccountService
 
     public async Task<bool> ResetPasswordAsync(ResetPasswordViewModel model)
     {
-        var user = await _userRepository.GetByResetToken(model.Token);
-        var principal = _jwtService.ValidateToken(model.Token);
+        User user = await _userRepository.GetByResetToken(model.Token);
+        ClaimsPrincipal principal = _jwtService.ValidateToken(model.Token);
         if (principal == null)
         {
             return false;

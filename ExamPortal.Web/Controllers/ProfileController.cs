@@ -1,6 +1,8 @@
 using System.Security.Claims;
 using ExamPortal.BusinessLogic.Interfaces;
 using ExamPortal.BusinessLogic.ViewModel.Profile;
+using ExamPortal.DataAccess.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExamPortal.Web.Controllers;
@@ -15,9 +17,9 @@ public class ProfileController : Controller
     }
     public async Task<IActionResult> Index()
     {
-        var email = User.FindFirstValue(ClaimTypes.Email);
+        string email = User.FindFirstValue(ClaimTypes.Email);
         if (email == null) return RedirectToAction("Login", "Account");
-        var model = await _profileService.GetUserProfileAsync(email);
+        MyProfileViewModel model = await _profileService.GetUserProfileAsync(email);
         return View(model);
     }
 
@@ -53,7 +55,7 @@ public class ProfileController : Controller
         TempData["SuccessMessage"] = "Profile details updated successfully.";
         return RedirectToAction("Index");
     }
-    
+
     [HttpGet("ChangePassword")]
     public async Task<IActionResult> ChangePassword()
     {
@@ -71,12 +73,35 @@ public class ProfileController : Controller
         {
             return BadRequest(new { message = "New Password cannot be same as the current  one", errorCode = "SamePasswordError" });
         }
-        var email = User.FindFirstValue(ClaimTypes.Email);
-        var result = await _profileService.ChangeUserPasswordAsync(email, model.CurrentPassword, model.NewPassword);
+        string email = User.FindFirstValue(ClaimTypes.Email);
+        bool result = await _profileService.ChangeUserPasswordAsync(email, model.CurrentPassword, model.NewPassword);
         if (!result)
         {
             return BadRequest(new { message = "Failed to change password", errorCode = "IncorrectPassword" });
         }
         return Ok(new { message = "Exam updated successfully." });
+    }
+
+    [HttpGet("GetNameAndImage")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetNameAndImage()
+    {
+        string userEmail = User.FindFirstValue(ClaimTypes.Email);
+        if (string.IsNullOrEmpty(userEmail))
+        {
+            return Json(new { success = false, message = "User not logged in" });
+        }
+        User? user = await _profileService.GetNameAndImage(userEmail);
+
+        if (user == null)
+        {
+            return Json(new { success = false, message = "User not found" });
+        }
+        return Json(new
+        {
+            success = true,
+            username = user.FirstName,
+            profileImg = user.ProfileImg
+        });
     }
 }

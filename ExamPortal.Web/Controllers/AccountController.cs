@@ -64,7 +64,7 @@ public class AccountController : Controller
         {
             return View(model);
         }
-        var result = await _accountService.RegisterAsync(model);
+        bool result = await _accountService.RegisterAsync(model);
         if (result)
         {
             TempData["SuccessMessage"] = "Registration successful.You can now log in.";
@@ -110,8 +110,7 @@ public class AccountController : Controller
     [HttpGet]
     public IActionResult ResetPassword(string token)
     {
-        var model = new ResetPasswordViewModel { Token = token };
-        return View(model);
+        return View(new ResetPasswordViewModel { Token = token });
     }
 
     [HttpPost]
@@ -130,5 +129,5 @@ public class AccountController : Controller
             return RedirectToAction("Login");
         }
         return View(model);
-    } 
+    }
 }

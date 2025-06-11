@@ -1,6 +1,7 @@
 using ExamPortal.BusinessLogic.Interfaces;
 using ExamPortal.BusinessLogic.ViewModel.Profile;
 using ExamPortal.DataAccess.Interfaces;
+using ExamPortal.DataAccess.Models;
 
 namespace ExamPortal.BusinessLogic.Implementations
 {
@@ -14,16 +15,21 @@ namespace ExamPortal.BusinessLogic.Implementations
 
         public async Task<bool> ChangeUserPasswordAsync(string email, string oldPassword, string newPassword)
         {
-            var userAccount = await _userRepository.GetByEmailAsync(email);
-            if (userAccount == null || (!BCrypt.Net.BCrypt.Verify(oldPassword, userAccount.PasswordHash))) return false;
-            userAccount.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
-            return await _userRepository.UpdateAsync(userAccount);
+            User user = await _userRepository.GetByEmailAsync(email);
+            if (user == null || (!BCrypt.Net.BCrypt.Verify(oldPassword, user.PasswordHash))) return false;
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            return await _userRepository.UpdateAsync(user);
         }
 
+        public async Task<User?> GetNameAndImage(string email)
+        {
+            User user = await _userRepository.GetByEmailAsync(email);
+            return user;
+        }
 
         public async Task<MyProfileViewModel> GetUserProfileAsync(string email)
         {
-            var user = await _userRepository.GetByEmailAsync(email);
+            User user = await _userRepository.GetByEmailAsync(email);
             if (user == null)
                 return null;
             return new MyProfileViewModel
@@ -40,7 +46,7 @@ namespace ExamPortal.BusinessLogic.Implementations
 
         public async Task<bool> UpdateUserProfileAsync(MyProfileViewModel model)
         {
-            var user = await _userRepository.GetByEmailAsync(model.Email);
+            User user = await _userRepository.GetByEmailAsync(model.Email);
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
             user.MobileNumber = model.Phonenumber;
@@ -52,5 +58,6 @@ namespace ExamPortal.BusinessLogic.Implementations
             }
             return await _userRepository.UpdateAsync(user);
         }
+
     }
 }

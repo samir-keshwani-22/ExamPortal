@@ -27,7 +27,6 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         {
             throw new ArgumentNullException(nameof(id), "Id cannot be null");
         }
-
         var entity = _dbSet.Find(id);
         if (entity == null)
         {

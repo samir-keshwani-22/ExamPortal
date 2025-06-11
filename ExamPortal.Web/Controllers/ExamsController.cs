@@ -1,5 +1,6 @@
 
 using ExamPortal.BusinessLogic.Interfaces;
+using ExamPortal.BusinessLogic.ViewModel.Examintaion;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExamPortal.Web.Controllers
@@ -13,7 +14,7 @@ namespace ExamPortal.Web.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            var exams = await _examinationService.GetAllExamsAsync();
+            List<ExamViewModel> exams = await _examinationService.GetAllExamsAsync();
             return View(exams);
         }
     }
