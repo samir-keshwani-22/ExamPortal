@@ -1,21 +1,20 @@
 @using ExamPortal.BusinessLogic.ViewModel.Exams
 @{
     Layout = "_Layout";
-    @* Layout = "_AuthLayout"; *@
     ViewData["Title"] = "Exam Page";
 }
 @model ExamInterfaceViewModel
 
-<div class="container-fluid  h-100 bg-light d-flex p-0">
+<div class="container-fluid h-100 bg-light d-flex p-0">
     <div class="col-md-3 bg-white border-end d-flex flex-column p-0">
         <div class="p-4 border-bottom">
             <h2 class="h5 fw-bold mb-2">@Model.Title</h2>
-            <div class="text-muted small mb-1">Duration:@Model.TotalDuration min</div>
+            <div class="text-muted small mb-1">Duration: @Model.TotalDuration min</div>
             <div class="text-muted small mb-1">Total Questions: @Model.TotalQuestion</div>
             <div class="text-muted small">Total Marks: @Model.TotalMarks</div>
         </div>
         <div class="p-4 border-bottom">
-            @await Html.PartialAsync("_Timer" )
+            @await Html.PartialAsync("_Timer")
         </div>
         <div class="p-4 border-top">
             <button type="button" class="btn primary-button w-100" data-bs-toggle="modal" data-bs-target="#submitModal">
@@ -26,21 +25,22 @@
     <div class="col-md-9 d-flex flex-column p-0">
         <div class="bg-white border-bottom p-4">
             <div class="d-flex justify-content-end align-items-center">
-
                 <div>
-                    <button style=" width: 140px;" class="btn primary-button me-2 @(3 == 0 ? "disabled" : "")"
-                        onclick="navigateToQuestion(@(3 - 1))">
+                    <button id="prevBtn" class="btn primary-button me-2"
+                        onclick="navigateToQuestion(currentQuestionIndex - 1)">
                         <i class="bi bi-chevron-left"></i> Previous
                     </button>
-                    <button style=" width: 140px;" class="btn primary-button   @(3 == 10 - 1 ? "disabled" : "")"
-                        onclick="navigateToQuestion(@(3 + 1))">
-                        Next<i class="bi bi-chevron-right"></i>
+                    <button id="nextBtn" class="btn primary-button"
+                        onclick="navigateToQuestion(currentQuestionIndex + 1)">
+                        Next <i class="bi bi-chevron-right"></i>
                     </button>
                 </div>
             </div>
         </div>
         <div class="p-5 flex-grow-1">
-            @await Html.PartialAsync("_QuestionCard" )
+            <div id="questionCardContainer">
+                @await Html.PartialAsync("_QuestionCard", Model.FirstQuestion)
+            </div>
         </div>
     </div>
 </div>
@@ -55,8 +55,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                Are you sure you want to submit? You have answered 2 out of 10
-                questions.
+                Are you sure you want to submit? You have answered 2 out of @Model.TotalQuestion questions.
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn primary-button-v1" onclick="submitExam()">Submit</button>
@@ -68,14 +67,32 @@
 
 @section Scripts {
     <script>
-        function navigateToQuestion(index) {
-        }
-        function submitExam() {
+        var examId = @Model.ExamId;
+        var currentQuestionIndex = 0;
+        var totalQuestions = @Model.TotalQuestion;
 
+        function navigateToQuestion(index) {
+            if (index < 0 || index >= totalQuestions) return;
+
+            $.ajax({
+                url: '@Url.Action("GetQuestionCard", "Exams")',
+                type: 'GET',
+                data: { examId: examId, questionIndex: index },
+                success: function (html) {
+                    $("#questionCardContainer").html(html);
+                    currentQuestionIndex = index;
+                    updateNavButtons();
+                }
+            });
         }
-        function showToast(msg) {
-            document.getElementById('toastMessage').innerText = msg;
-            new bootstrap.Toast(document.getElementById('examToast')).show();
+
+        function updateNavButtons() {
+            $("#prevBtn").prop("disabled", currentQuestionIndex === 0);
+            $("#nextBtn").prop("disabled", currentQuestionIndex === totalQuestions - 1);
         }
+
+        $(document).ready(function () {
+            updateNavButtons();
+        });
     </script>
 }

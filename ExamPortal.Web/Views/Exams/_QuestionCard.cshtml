@@ -1,45 +1,30 @@
+@model ExamPortal.BusinessLogic.ViewModel.Exams.QuestionCardViewModel
+
 <div class="bg-white rounded-4 shadow-sm border p-4">
     <div class="d-flex justify-content-between pb-3">
         <h5 class="mb-0">
-            Question 2 of 10
+            Question @Model.QuestionNumber of @Model.TotalQuestion
         </h5>
-        <div class="text-muted small">Marks: 5</div>
+        <div class="text-muted small">Marks: @Model.Marks</div>
     </div>
-    <h2 class="h6 fw-bold mb-4">Who is PM?</h2>
-    @if ("mcq" == "mcq")
-    {
-        @* @for (int i = 0; i < Model.Question.Options.Count; i++)
-        { *@
-        <div class="form-check mb-2">
-            <input class="form-check-input" type="radio" name="answer" id="option1" value="Modi" onchange=" ">
-            <label class="form-check-label" for="option@i">Modi</label>
-        </div>
-        <div class="form-check mb-2">
-            <input class="form-check-input" type="radio" name="answer" id="option1" value="Modi" onchange=" ">
-            <label class="form-check-label" for="option@i">Rahul</label>
-        </div>
-        <div class="form-check mb-2">
-            <input class="form-check-input" type="radio" name="answer" id="option1" value="Modi" onchange=" ">
-            <label class="form-check-label" for="option@i">Rahul</label>
-        </div>
-        <div class="form-check mb-2">
-            <input class="form-check-input" type="radio" name="answer" id="option1" value="Modi" onchange=" ">
-            <label class="form-check-label" for="option@i">Rahul</label>
-        </div>
-        @* } *@
-    }
-    @* else if ("mcq" == "true-false")
-    {
-    <div class="form-check mb-2">
-        <input class="form-check-input" type="radio" name="answer" id="true" value="true" @(Model.Answer is bool a && a
-                        ? "checked" : "") onchange = "onAnswerChange(true)" >
-                    <label class="form-check-label" for="true">True</label>
-                </div>
-                <div class="form-check mb-2">
-                    <input class="form-check-input" type="radio" name="answer" id="false" value="false" @(Model.Answer is bool a &&
-                        !a ? "checked" : "") onchange = "onAnswerChange(false)" >
-        <label class="form-check-label" for="false">False</label>
-    </div>
-        } *@
+    <h2 class="h6 fw-bold mb-4">@Model.QuestionText</h2>
 
+    @if (Model.QuestionType == "MCQ" || Model.QuestionType == "TrueFalse")
+    {
+        for (int i = 0; i < Model.Options.Count; i++)
+        {
+            var option = Model.Options[i];
+            <div class="form-check mb-2">
+                <input class="form-check-input" type="radio" name="answer" id="option@option.Id" value="@option.Id"
+                    @(Model.SelectedOptionId == option.Id ? "checked" : "") />
+                <label class="form-check-label" for="option@option.Id">
+                    @(option.OptionText)
+                </label>
+            </div>
+        }
+    }
+    else
+    {
+        <span class="text-muted">Question type not supported yet.</span>
+    }
 </div>

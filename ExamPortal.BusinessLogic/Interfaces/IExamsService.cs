@@ -5,5 +5,7 @@ namespace ExamPortal.BusinessLogic.Interfaces
     public interface IExamsService
     {
         Task<ExamInterfaceViewModel> GetExamInterfaceViewModel(int examId);
+        Task<QuestionCardViewModel> GetQuestionCardViewModel(int examId, int questionIndex);
+
     }
 }
