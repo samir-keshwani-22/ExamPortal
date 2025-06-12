@@ -24,11 +24,12 @@
                     <td class="text-center   text-nowrap">@student.Email</td>
                     <td class="text-center   text-nowrap">@(@student.Phonenumber == null ? "N/A" : @student.Phonenumber)</td>
                     <td class="text-center   text-nowrap">
-                        <i data-toggle="tooltip" data-placement="bottom" title="Edit student" role="button"
-                            class="fa-solid fa-pen bg-black mx-2 edit-student-icon primary-color"
+                        <i data-toggle="tooltip" data-student-id="@student.Id" data-placement="bottom" title="Edit student"
+                            role="button" class="fa-solid fa-pen bg-black mx-2 edit-student-icon primary-color"
                             data-exam-id="@student.Id"></i>
-                        <i data-toggle="tooltip" data-placement="bottom" title="Delete student" role="button"
-                            class="fa-solid fa-trash mx-2 primary-color" data-bs-toggle="modal" data-bs-target=""></i>
+                        <i onclick="deleteStudent(@student.Id)" data-toggle="tooltip" data-placement="bottom"
+                            title="Delete student" role="button" class="fa-solid fa-trash mx-2 primary-color"
+                            data-bs-toggle="modal" data-bs-target="#deleteStudentModal"></i>
                     </td>
                 </tr>
             }

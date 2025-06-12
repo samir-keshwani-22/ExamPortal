@@ -1,0 +1,86 @@
+<div class="container-fluid  h-100 bg-light d-flex p-0">
+    <div class="col-md-3 bg-white border-end d-flex flex-column p-0">
+        <div class="p-4 border-bottom">
+            <h2 class="h5 fw-bold mb-2">JEE</h2>
+            <div class="text-muted small mb-1">Duration: 120 min</div>
+            <div class="text-muted small mb-1">Total Questions: 10</div>
+            <div class="text-muted small">Total Marks: 50</div>
+        </div>
+        <div class="p-4 border-bottom">
+            @await Html.PartialAsync("_Timer" )
+        </div>
+        <div class="p-4 border-top">
+            <button type="button" class="btn primary-button w-100" data-bs-toggle="modal" data-bs-target="#submitModal">
+                <i class="bi bi-flag"></i> Submit Exam
+            </button>
+        </div>
+    </div>
+    <div class="col-md-9 d-flex flex-column p-0">
+        <div class="bg-white border-bottom p-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h3 class="h5 mb-0">
+                        Question 2 of 10
+                    </h3>
+                    <div class="text-muted small">Marks: 5</div>
+                </div>
+                <div>
+                    <button class="btn btn-link text-secondary me-2 @(3 == 0 ? "disabled" : "")"
+                        onclick="navigateToQuestion(@(3 - 1))">
+                        <i class="bi bi-chevron-left"></i> Previous
+                    </button>
+                    <button class="btn btn-link text-secondary @(3 == 10 - 1 ? "disabled" : "")"
+                        onclick="navigateToQuestion(@(3 + 1))">
+                        Next <i class="bi bi-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="p-5 flex-grow-1">
+            @await Html.PartialAsync("_QuestionCard" )
+        </div>
+    </div>
+    <div class="modal fade" id="submitModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4">
+                <div class="modal-header">
+                    <h5 class="modal-title text-warning">
+                        <i class="bi bi-exclamation-triangle-fill"></i> Submit Exam
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to submit? You have answered 2 out of 10
+                    questions.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn secondary-button" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn primary-button-v1" onclick="submitExam()">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="examToast" class="toast align-items-center text-white bg-danger border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body" id="toastMessage"></div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function navigateToQuestion(index) {
+        }
+        function submitExam() {
+
+        }
+        function showToast(msg) {
+            document.getElementById('toastMessage').innerText = msg;
+            new bootstrap.Toast(document.getElementById('examToast')).show();
+        }
+    </script>
+}

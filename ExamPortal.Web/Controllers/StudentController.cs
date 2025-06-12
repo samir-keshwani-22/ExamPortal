@@ -54,4 +54,41 @@ public class StudentController : Controller
         return PartialView("_StudentList", students);
     }
 
+    [HttpPost("DeleteStudent")]
+    public async Task<IActionResult> DeleteStudent(int id)
+    {
+        bool success = await _studentService.DeleteStudentAsync(id);
+        if (success == false)
+        {
+            return BadRequest(new { message = "Unable to delete the student." });
+        }
+        return Ok(new { success = true, message = "Student deleted !" });
+    }
+
+
+    [HttpGet("EditStudent")]
+    public async Task<IActionResult> EditStudent(int id)
+    {
+        EditStudentViewModel model = await _studentService.GetEditStudentModal(id);
+        return PartialView("_EditStudent", model);
+    }
+
+    [HttpPost("EditStudent")]
+    public async Task<IActionResult> EditStudent(EditStudentViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(new { message = "Invalid model state.", errorCode = "ModelStateInvalid" });
+        }
+        if (await _studentService.CheckStudentExistsForEditAsync(model.Email, model.Id))
+        {
+            return BadRequest(new { message = "Student with the same email already exists.", errorCode = "DuplicateStudentName" });
+        }
+        bool success = await _studentService.EditStudentAsync(model);
+        if (!success)
+        {
+            return BadRequest(new { message = "Internal server error", errorCode = "InternalServerError" });
+        }
+        return Ok(new { message = "Student updated successfully." });
+    }
 }

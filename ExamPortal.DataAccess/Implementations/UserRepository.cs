@@ -15,7 +15,7 @@ public class UserRepository : GenericRepository<User>, IUserRepository
 
     public async Task<List<User>> GetAllStudents()
     {
-        return await _examPortalContext.Users.Where(u => u.RoleId == 1).ToListAsync();
+        return await _examPortalContext.Users.Where(u => u.RoleId == 1 && u.IsDeleted == false).OrderBy(u => u.FirstName).ToListAsync();
     }
 
 

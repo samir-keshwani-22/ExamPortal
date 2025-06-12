@@ -189,7 +189,7 @@ public class ExaminationService : IExaminationService
         };
         return model;
     }
-
+    
     public async Task<ExamViewModel> GetEditExamModel(int examId)
     {
         Exam exam = await _examRepository.GetByIdAsync(examId);

@@ -75,8 +75,8 @@ li {
 }
 
 .sidebar-item .sidebar-link.active {
-    color: var(--primary_color);
-    background-color: aliceblue;
+    color: white;
+    background-color: var(--primary_color);
 }
 
 .main {

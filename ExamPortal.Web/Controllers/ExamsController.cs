@@ -17,5 +17,10 @@ namespace ExamPortal.Web.Controllers
             List<ExamViewModel> exams = await _examinationService.GetAllExamsAsync();
             return View(exams);
         }
+
+        public async Task<IActionResult> ExamInterface()
+        {
+            return View();
+        }
     }
 }
