@@ -1,0 +1,90 @@
+@using ExamPortal.BusinessLogic.ViewModel.Student
+@model StudentViewModel
+<partial name="_ValidationScriptsPartial" />
+<div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content rounded-4 shadow">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="addStudentLabel"><i class="bi bi-person-badge me-2"></i>New Student</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="addStudentForm" asp-controller="Student" method="post" asp-action="AddStudent">
+                <div class="modal-body">
+                    <div class="row  ">
+                        <div class="row px-3">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input asp-for="FirstName" class="form-control" id="firstName"
+                                        placeholder="First Name">
+                                    <label for="firstName">First Name</label>
+                                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input asp-for="LastName" class="form-control" id="lastName"
+                                        placeholder="Last Name">
+                                    <label for="lastName">Last Name</label>
+                                    <span asp-validation-for="LastName" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row px-3">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input class="form-control" asp-for="Email" id="email" placeholder="Email"
+                                        rows="3" />
+                                    <label for="email">Email</label>
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input asp-for="Password" class="form-control" id="password" placeholder="Password">
+                                    <label for="password">Password </label>
+                                    <span asp-validation-for="Password" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row px-3">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input asp-for="Phonenumber" class="form-control" id="phone" placeholder="Phone">
+                                    <label for="phone">Phone</label>
+                                    <span asp-validation-for="Phonenumber" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input asp-for="Zipcode" type="text" class="form-control" id="zipcode"
+                                        placeholder="Zipcode">
+                                    <label for="zipcode">Zipcode</label>
+                                    <span asp-validation-for="Zipcode" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row px-3">
+                            <div class="col-md-12 mb-3">
+                                <div class="form-floating">
+                                    <textarea asp-for="Address" class="form-control" id="address" placeholder="Address"
+                                        rows="3"></textarea>
+                                    <label for="address">Address</label>
+                                    <span asp-validation-for="Address" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0">
+                    <button type="submit" class="btn primary-button">
+                        <i class="bi bi-save2-fill me-1"></i>Save
+                    </button>
+                    <button type="button" class="btn secondary-button" data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

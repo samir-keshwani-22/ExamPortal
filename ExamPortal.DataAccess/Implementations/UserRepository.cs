@@ -12,6 +12,13 @@ public class UserRepository : GenericRepository<User>, IUserRepository
     {
         _examPortalContext = examPortalContext;
     }
+
+    public async Task<List<User>> GetAllStudents()
+    {
+        return await _examPortalContext.Users.Where(u => u.RoleId == 1).ToListAsync();
+    }
+
+
     public async Task<User> GetByEmailAsync(string email)
     {
         return await _examPortalContext.Users.Include(u => u.Role)

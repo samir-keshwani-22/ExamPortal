@@ -34,7 +34,7 @@ async function updateQuestionListPartialView(examId) {
   });
   $("#questionListContainer").html(listPartialHtml);
 }
- 
+
 function confirmExamDelete() {
   $.ajax({
     url: '/Examination/DeleteExam',
@@ -134,7 +134,7 @@ $(document).ready(function () {
   $(document).on("change", "#questionTypeSelector", function () {
     renderOptions($(this).val());
   });
- 
+
   $(document).on("submit", "#questionForm", async function (e) {
     e.preventDefault();
     var form = $(this);

@@ -50,7 +50,8 @@ public partial class ExamPortalContext : DbContext
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.Property(e => e.UpdatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.Property(e => e.IsDeleted).HasDefaultValue(false);
-            entity.Property(e => e.RoleId).HasDefaultValueSql("2");
+            entity.Property(e => e.RoleId).HasDefaultValueSql("1");
+            entity.Property(e => e.ProfileImg).HasDefaultValue("/img/default_profile_picture.png");
 
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
                 .OnDelete(DeleteBehavior.ClientSetNull)

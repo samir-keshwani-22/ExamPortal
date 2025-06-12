@@ -14,7 +14,9 @@
     <link rel="stylesheet" href="~/css/delete-modal.css" />
     <link rel="stylesheet" href="~/css/sidebar.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+    @* <link rel="icon" type="image/png" sizes="321x321" href="@Url.Content("~/img/logos/logo-dark-bg.png")" /> *@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 </head>
 
 <body style="height: 100vh; overflow: hidden;">
@@ -35,12 +37,13 @@
                                     <i class="fas fa-tachometer-alt pe-2"></i>Dashboard
                                 </a>
                             </li>
-                            @* @if (User.FindFirstValue(ClaimTypes.Role) == "admin")
+                            @* @if (User.FindFirstValue(ClaimTypes.Role) == "student")
                             { *@
                             <li class="sidebar-item">
-                                <a asp-action="UserList" asp-controller="User"
-                                    class="sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "User" ? "active" : "")">
-                                    <i class="fas fa-user pe-2"></i>Users
+                                <a asp-action="Index" asp-controller="Exams"
+                                    class="sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "Exams" ? "active" : "")">
+                                    <i class="bi bi-clipboard2-check-fill pe-2"></i>
+                                    Exams
                                 </a>
                             </li>
                             @* }
@@ -53,13 +56,13 @@
                                 </a>
                             </li>
                             @* }
-                            @if (User.FindFirstValue(ClaimTypes.Role) == "student")
+
+                            @if (User.FindFirstValue(ClaimTypes.Role) == "admin")
                             { *@
                             <li class="sidebar-item">
-                                <a asp-action="Index" asp-controller="Exams"
-                                    class="sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "Exams" ? "active" : "")">
-                                    <i class="bi bi-clipboard2-check-fill pe-2"></i>
-                                    Exams
+                                <a asp-action="Index" asp-controller="Student"
+                                    class="sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "Student" ? "active" : "")">
+                                    <i class="fas fa-user pe-2"></i>Student
                                 </a>
                             </li>
                             @* } *@
@@ -127,7 +130,6 @@
     </div>
 
     <div id="changePasswordContainer">
-
     </div>
 
     <!-- Offcanvas Sidebar for Mobile -->
@@ -147,12 +149,20 @@
                         class="sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "Home" ? "active" : "")"><i
                             class="fas fa-tachometer-alt pe-2"></i>Dashboard</a>
                 </li>
-                <li class="sidebar-item"><a asp-action="UserList" asp-controller="User"
-                        class="sidebar-link  @(ViewContext.RouteData.Values["controller"].ToString() == "User" ? "active" : "") "><i
-                            class="fas fa-user pe-2"></i>Users</a></li>
+
+                <li class="sidebar-item">
+                    <a asp-action="Index" asp-controller="Exams"
+                        class="sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "Exams" ? "active" : "")">
+                        <i class="bi bi-clipboard2-check-fill pe-2"></i>
+                        Exams
+                    </a>
+                </li>
                 <li class="sidebar-item"><a asp-action="Index" asp-controller="Examination"
                         class="sidebar-link  @(ViewContext.RouteData.Values["controller"].ToString() == "Examination" ? "active" : "") ">
                         <i class="bi bi-journal-album pe-2"></i>Examination</a></li>
+                <li class="sidebar-item"><a asp-action="Index" asp-controller="Student"
+                        class="sidebar-link  @(ViewContext.RouteData.Values["controller"].ToString() == "Student" ? "active" : "") "><i
+                            class="fas fa-user pe-2"></i>Student</a></li>
             </ul>
         </div>
     </div>

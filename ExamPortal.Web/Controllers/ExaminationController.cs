@@ -46,9 +46,8 @@ public class ExaminationController : Controller
 
         int examId = await _examinationService.AddExamAsync(model);
         if (examId > 0)
-            return Ok(new { message = "Exam added successfully." });
-        ModelState.AddModelError("", "Something went wrong");
-        return View(model);
+            return Ok(new { message = "Exam added successfully." }); 
+        return BadRequest(new { message = "Internal server error", errorCode = "InternalServerError" });
     }
 
     [HttpGet("EditExam")]
