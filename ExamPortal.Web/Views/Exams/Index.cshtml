@@ -43,7 +43,7 @@
                                     </div>
                                 </div>
                                 <div class="text-end">
-                                    <button   class="btn primary-button  "  @(exam.ExamStatus != "Active" ? "disabled" : "") >
+                                    <button onclick="window.location='@Url.Action("ExamInterface", "Exams",new {examId= @exam.Id})'"    class="btn primary-button  "  @(exam.ExamStatus != "Active" ? "disabled" : "") >
                                         <i class="bi bi-play-fill"></i> Start Exam
                                     </button> 
                                 </div>

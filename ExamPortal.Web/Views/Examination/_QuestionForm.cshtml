@@ -10,7 +10,6 @@
             <textarea asp-for="QuestionText" class="form-control" rows="3"></textarea>
             <span asp-validation-for="QuestionText" class="text-danger"></span>
         </div>
-
         <div class="mb-3">
             <label asp-for="QuestionType" class="form-label">Question Type</label>
             <select asp-for="QuestionType" class="form-select" id="questionTypeSelector">
@@ -48,7 +47,8 @@
                 {
                     <div class="mb-2">
                         <label class="form-label">Option @(i + 1)</label>
-                        <input name="Options[@i]" class="form-control" value="@Model.Options[i]" @(Model.QuestionType=="TrueFalse" ? "readonly" : "")/>
+                        <input name="Options[@i]" class="form-control" value="@Model.Options[i]"
+                            @(Model.QuestionType == "TrueFalse" ? "readonly" : "") />
                     </div>
                 }
             }
@@ -57,7 +57,7 @@
             <label asp-for="CorrectOptionIndex" class="form-label">Correct Option Number</label>
             <input asp-for="CorrectOptionIndex" class="form-control" type="number" />
             <span asp-validation-for="CorrectOptionIndex" class="text-danger"></span>
-        </div> 
+        </div>
         <button type="submit" class="btn   primary-button">
             @(Model.Id > 0 ? "Update Question" : "Add Question")
         </button>

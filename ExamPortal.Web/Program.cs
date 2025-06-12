@@ -24,6 +24,7 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IExaminationService, ExaminationService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IStudentService, StudentService>();
+builder.Services.AddScoped<IExamsService,ExamsService>();
 
 // i need to pass the root folder path so used this way injecion 
 builder.Services.AddScoped<IEmailService>(provider =>
