@@ -21,40 +21,27 @@ namespace ExamPortal.Web.Controllers
             List<ExamViewModel> exams = await _examinationService.GetAllExamsAsync();
             return View(exams);
         }
-
-        // Exam interface: initial load (shows first question)
         public async Task<IActionResult> ExamInterface(int examId)
         {
-            var model = await _examsService.GetExamInterfaceViewModel(examId);
-
-            // Timer starts NOW!
+            ExamInterfaceViewModel model = await _examsService.GetExamInterfaceViewModel(examId);
             DateTime examStartTime = DateTime.UtcNow;
-            int examDuration = model.TotalDuration; // in minutes
+            int examDuration = model.TotalDuration;
             DateTime endTime = examStartTime.AddMinutes(examDuration);
-
-            int remainingSeconds = (int)(endTime - DateTime.UtcNow).TotalSeconds;
+            int remainingSeconds = (int)(endTime - examStartTime).TotalSeconds;
             if (remainingSeconds < 0) remainingSeconds = 0;
-
             ViewBag.RemainingSeconds = remainingSeconds;
-
             return View(model);
         }
 
-        // AJAX: Get a specific question (for navigation)
         [HttpGet]
         public async Task<IActionResult> GetQuestionCard(int examId, int questionIndex)
         {
             var questionVm = await _examsService.GetQuestionCardViewModel(examId, questionIndex);
             if (questionVm == null)
                 return NotFound();
-
-            // Pass index and total for the view (used for "Question X of Y")
-            ViewBag.CurrentIndex = questionVm.QuestionNumber - 1;
-            ViewBag.TotalQuestions = questionVm.TotalQuestion;
+            // ViewBag.CurrentIndex = questionVm.QuestionNumber - 1;
+            // ViewBag.TotalQuestions = questionVm.TotalQuestion;
             return PartialView("_QuestionCard", questionVm);
         }
-
-
-
     }
 }

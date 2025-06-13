@@ -20,16 +20,13 @@
         var minutes = Math.floor(remainingSeconds / 60);
         var seconds = remainingSeconds % 60;
         document.getElementById('timerDisplay').textContent = pad(minutes) + ':' + pad(seconds);
-
         if (remainingSeconds === 0) {
             clearInterval(timerInterval);
-            // Optional: auto-submit exam here
             // submitExam();
             alert("Time's up! Exam will be submitted.");
         }
         remainingSeconds--;
     }
-
-    updateTimer(); // Initial call
+    updateTimer();
     var timerInterval = setInterval(updateTimer, 1000);
 </script>

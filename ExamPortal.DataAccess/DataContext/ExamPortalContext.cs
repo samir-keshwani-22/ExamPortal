@@ -5,7 +5,23 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ExamPortal.DataAccess.DataContext;
 
-public partial class ExamPortalContext : DbContext
+public interface IExamPortalContext
+{
+    DbSet<Role> Roles { get; set; }
+    DbSet<User> Users { get; set; }
+    DbSet<Exam> Exams { get; set; }
+    DbSet<ExamSchedule> ExamSchedules { get; set; }
+    DbSet<Question> Questions { get; set; }
+    DbSet<QuestionOption> QuestionOptions { get; set; }
+    DbSet<ExamAttempt> ExamAttempts { get; set; }
+    DbSet<Answer> Answers { get; set; }
+    DbSet<Announcement> Announcements { get; set; }
+    DbSet<Feedback> Feedbacks { get; set; }
+    DbSet<UserSession> UserSessions { get; set; }
+    DbSet<Notification> Notifications { get; set; }
+}
+
+public partial class ExamPortalContext : DbContext, IExamPortalContext
 {
     public ExamPortalContext()
     {
@@ -92,3 +108,10 @@ public partial class ExamPortalContext : DbContext
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
+
+
+
+// dotnet ef migrations add AddedDefaultValueForMarksExam  --startup-project ../ExamPortal.Web 
+// dotnet ef database update --startup-project ../ExamPortal.Web 
+// SITE KEY 6LfcDl8rAAAAAC7dvSte-Cw4vwCl1iKJXo60ztiX
+// SECRET KEY 6LfcDl8rAAAAAPP3ZNXf3pxSWZ-kXlhG8XnXxdBi

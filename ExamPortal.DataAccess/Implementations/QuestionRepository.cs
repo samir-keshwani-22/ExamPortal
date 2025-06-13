@@ -18,5 +18,4 @@ public class QuestionRepository : GenericRepository<Question>, IQuestionReposito
     {
         return await _examPortalContext.Questions.Where(q => q.ExamId == examId && q.IsDeleted == false).ToListAsync();
     }
-
 }

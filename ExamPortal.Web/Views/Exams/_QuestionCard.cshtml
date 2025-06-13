@@ -15,9 +15,9 @@
         {
             var option = Model.Options[i];
             <div class="form-check mb-2">
-                <input class="form-check-input" type="radio" name="answer" id="option@option.Id" value="@option.Id"
+                <input class="form-check-input" type="radio" name="answer" id="@option.Id" value="@option.Id"
                     @(Model.SelectedOptionId == option.Id ? "checked" : "") />
-                <label class="form-check-label" for="option@option.Id">
+                <label class="form-check-label" for="@option.Id">
                     @(option.OptionText)
                 </label>
             </div>

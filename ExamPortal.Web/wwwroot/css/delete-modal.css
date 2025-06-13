@@ -66,6 +66,12 @@
     margin-bottom: 1rem;
 }
 
+.success-icon {
+    font-size: 3rem;
+    color: green;
+    margin-bottom: 1rem;
+}
+
 .delete-icon {
     font-size: 3rem;
     color: red !important;

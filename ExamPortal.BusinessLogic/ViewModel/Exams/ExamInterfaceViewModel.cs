@@ -7,9 +7,8 @@ namespace ExamPortal.BusinessLogic.ViewModel.Exams
         public int TotalQuestion { get; set; }
         public int TotalMarks { get; set; }
         public int TotalDuration { get; set; }
-        // For the initial render, you may want to include the first question:
         public QuestionCardViewModel FirstQuestion { get; set; }
-         public DateTime StartDate { get; set; } 
+        public DateTime StartDate { get; set; }
     }
 
     public class QuestionCardViewModel
@@ -22,9 +21,7 @@ namespace ExamPortal.BusinessLogic.ViewModel.Exams
         public int QuestionNumber { get; set; }
         public int TotalQuestion { get; set; }
         public List<QuestionOptionViewModel> Options { get; set; } = new();
-
         public int? SelectedOptionId { get; set; }
-
     }
 
     public class QuestionOptionViewModel

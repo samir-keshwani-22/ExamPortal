@@ -19,17 +19,14 @@ namespace ExamPortal.BusinessLogic.Implementations
         }
         public async Task<ExamInterfaceViewModel> GetExamInterfaceViewModel(int examId)
         {
-            var exam = await _examRepository.GetByIdAsync(examId);
-            var questions = await _questionRepository.GetQuestionsByExamIdAsync(examId);
+            Exam exam = await _examRepository.GetByIdAsync(examId);
+            List<Question> questions = await _questionRepository.GetQuestionsByExamIdAsync(examId);
             var totalMarks = questions.Sum(q => q.Marks);
-
-            // Get first question
-            var firstQuestion = questions.FirstOrDefault();
-            QuestionCardViewModel firstQuestionVm = null;
+            Question? firstQuestion = questions.FirstOrDefault();
+            QuestionCardViewModel? firstQuestionVm = null;
             if (firstQuestion != null)
             {
                 var options = await _optionRepository.GetOptionsByQuestionIdAsync(firstQuestion.Id);
-
                 firstQuestionVm = new QuestionCardViewModel
                 {
                     Id = firstQuestion.Id,
@@ -46,7 +43,6 @@ namespace ExamPortal.BusinessLogic.Implementations
                     }).ToList()
                 };
             }
-
             return new ExamInterfaceViewModel
             {
                 ExamId = exam.Id,
@@ -57,17 +53,13 @@ namespace ExamPortal.BusinessLogic.Implementations
                 FirstQuestion = firstQuestionVm
             };
         }
-
-        // For AJAX: Get any question by index (zero-based)
         public async Task<QuestionCardViewModel> GetQuestionCardViewModel(int examId, int questionIndex)
         {
             var questions = (await _questionRepository.GetQuestionsByExamIdAsync(examId)).ToList();
             if (questionIndex < 0 || questionIndex >= questions.Count)
                 return null;
-
             var question = questions[questionIndex];
             var options = await _optionRepository.GetOptionsByQuestionIdAsync(question.Id);
-
             return new QuestionCardViewModel
             {
                 Id = question.Id,
@@ -84,7 +76,5 @@ namespace ExamPortal.BusinessLogic.Implementations
                 }).ToList()
             };
         }
-
-
     }
 }

@@ -2,14 +2,15 @@
     ViewData["Title"] = "Exams";
 }
 @using ExamPortal.BusinessLogic.ViewModel.Examintaion
-@model List<ExamViewModel>
-
+@model List<ExamViewModel>  
+  
+<script src="~/js/exams.js"></script>
 <div class="main">
     <div class="container-fluid mt-1 px-0 pt-2">
         <div class="container-fluid px-0" style="background-color: #f2f2f2;">
             <div class="heading-content py-2 mx-4 d-flex flex-column flex-md-row justify-content-between">
                 <div class="heading-left fw-bolder">
-                    <h1 style="color: #333446;">Available Exams</h1>
+                    <h1 style="color:  var(--primary_color);">Available Exams</h1>
                     <p class="lead   text-muted  ">Choose an exam to begin your assessment</p>
                 </div>
             </div>
@@ -43,7 +44,8 @@
                                     </div>
                                 </div>
                                 <div class="text-end">
-                                    <button onclick="window.location='@Url.Action("ExamInterface", "Exams",new {examId= @exam.Id})'"    class="btn primary-button  "  @(exam.ExamStatus != "Active" ? "disabled" : "") >
+                                    <button data-bs-toggle="modal"
+                                    data-bs-target="#startExamModal" onclick="setExamStartId(@exam.Id)"    class="btn primary-button  "  @(exam.ExamStatus != "Active" ? "disabled" : "") >
                                         <i class="bi bi-play-fill"></i> Start Exam
                                     </button> 
                                 </div>
@@ -63,4 +65,24 @@
             </div>
         </div> 
     </div>
-</div>
+</div> 
+ <div class="modal fade" id="startExamModal" tabindex="-1" aria-labelledby="startExamLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header"><button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center "> 
+                         <i class="fa-regular fa-circle-check success-icon"></i>
+                    <p class="mb-0">Are you sure you want to start the exam?</p>
+                     
+                </div>
+                <hr>
+                <div class="modal-footer justify-content-center">
+                   
+                        <button type="button" onclick="confirmExamStart()" class="btn primary-button-v1">Yes</button>
+                  
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                </div>
+            </div>
+        </div>
+ </div>
