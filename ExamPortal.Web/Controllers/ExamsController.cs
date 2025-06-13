@@ -1,4 +1,5 @@
 
+using System.Security.Claims;
 using ExamPortal.BusinessLogic.Interfaces;
 using ExamPortal.BusinessLogic.ViewModel.Examintaion;
 using ExamPortal.BusinessLogic.ViewModel.Exams;
@@ -39,9 +40,29 @@ namespace ExamPortal.Web.Controllers
             var questionVm = await _examsService.GetQuestionCardViewModel(examId, questionIndex);
             if (questionVm == null)
                 return NotFound();
-            // ViewBag.CurrentIndex = questionVm.QuestionNumber - 1;
-            // ViewBag.TotalQuestions = questionVm.TotalQuestion;
             return PartialView("_QuestionCard", questionVm);
+        }
+
+        [HttpPost]
+
+        public async Task<IActionResult> RegisterForExam(int examId)
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            bool checkIfAlreadyRegistered = await _examsService.CheckIfAlreadyRegisteredForExamAsync(examId, email);
+            if (checkIfAlreadyRegistered)
+            {
+                return BadRequest(new { message = "You have already registered for this exam.", errorCode = "AlreadyRegistered" });
+            }
+            else
+            {
+                bool success = await _examsService.RegisterForExamAsync(examId, email);
+                if (success == false)
+                {
+                    return BadRequest(new {  message = "Internal server error while registering for the exam.", errorCode = "InternalServerError" });
+                }
+                return Ok(new {success = true, message = "Successfully registered for the exam." });
+            }
+
         }
     }
 }

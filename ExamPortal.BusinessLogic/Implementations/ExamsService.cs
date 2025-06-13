@@ -10,13 +10,28 @@ namespace ExamPortal.BusinessLogic.Implementations
         private readonly IExamRepository _examRepository;
         private readonly IQuestionRepository _questionRepository;
         private readonly IQuestionOptionRepository _optionRepository;
+        private readonly IUserRepository _userRepository;
 
-        public ExamsService(IExamRepository examRepository, IQuestionOptionRepository optionRepository, IQuestionRepository questionRepository)
+        private readonly IExamRegistrationRepository _examRegistrationRepository;
+
+        public ExamsService(IExamRepository examRepository, IQuestionOptionRepository optionRepository, IQuestionRepository questionRepository, IExamRegistrationRepository examRegistrationRepository, IUserRepository userRepository)
         {
             _examRepository = examRepository;
             _questionRepository = questionRepository;
             _optionRepository = optionRepository;
+            _examRegistrationRepository = examRegistrationRepository;
+            _userRepository = userRepository;
         }
+
+        public async Task<bool> CheckIfAlreadyRegisteredForExamAsync(int examId, string email)
+        {
+            User user = await _userRepository.GetByEmailAsync(email);
+            if (user == null)
+                return false;
+            return await _examRegistrationRepository.CheckAlreadyRegisteredForExamAsync(examId, user.Id
+            );
+        }
+
         public async Task<ExamInterfaceViewModel> GetExamInterfaceViewModel(int examId)
         {
             Exam exam = await _examRepository.GetByIdAsync(examId);
@@ -75,6 +90,18 @@ namespace ExamPortal.BusinessLogic.Implementations
                     OptionText = o.OptionText
                 }).ToList()
             };
+        }
+
+        public async Task<bool> RegisterForExamAsync(int examId, string email)
+        {
+            User user = await _userRepository.GetByEmailAsync(email);
+            ExamRegistration registration = new ExamRegistration
+            {
+                ExamId = examId,
+                UserId = user.Id
+            };
+            await _examRegistrationRepository.AddAsync(registration);
+            return true;
         }
     }
 }

@@ -24,7 +24,7 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IExaminationService, ExaminationService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IStudentService, StudentService>();
-builder.Services.AddScoped<IExamsService,ExamsService>();
+builder.Services.AddScoped<IExamsService, ExamsService>();
 
 // i need to pass the root folder path so used this way injecion 
 builder.Services.AddScoped<IEmailService>(provider =>
@@ -33,6 +33,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 builder.Services.AddScoped<IExamRepository, ExamRepository>();
 builder.Services.AddScoped<IQuestionOptionRepository, QuestionOptionRepository>();
+builder.Services.AddScoped<IExamRegistrationRepository, ExamRegistrationRepository>();
+
 
 builder.Services.AddDbContext<ExamPortalContext>(q => q.UseNpgsql(conn));
 

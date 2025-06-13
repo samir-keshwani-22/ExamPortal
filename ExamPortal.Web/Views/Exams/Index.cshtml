@@ -21,7 +21,7 @@
                         <div class="col-lg-4 mb-4">
                             <div class="card h-100 border shadow-sm">
                                 <div class="card-body ">
-                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div class="d-flex justify-content-between align-items-start mb-3" style="height: 100px;">
                                         <div>
                                             <h4 class="fw-bold primary-color"> @exam.Title</h4>
                                             <p class="text-muted small "> @exam.Description</p>
@@ -44,10 +44,21 @@
                                     </div>
                                 </div>
                                 <div class="text-end">
-                                    <button data-bs-toggle="modal"
-                                    data-bs-target="#startExamModal" onclick="setExamStartId(@exam.Id)"    class="btn primary-button  "  @(exam.ExamStatus != "Active" ? "disabled" : "") >
-                                        <i class="bi bi-play-fill"></i> Start Exam
-                                    </button> 
+                                    @* <button data-bs-toggle="modal"
+                                    data-bs-target="#startExamModal" onclick="setExamStartId(@exam.Id)"    class="btn primary-button  "  @(exam.ExamStatus == "Completed"  ? "disabled" : "") >
+                                        <i class="bi bi-play-fill"></i>@(exam.ExamStatus == "Active"  ? "Start Exam": exam.ExamStatus == "Completed"?"Finished":  "Register")  
+                                    </button>  *@
+
+                                    <button 
+                                        data-bs-toggle="modal"
+                                        data-bs-target="@(exam.ExamStatus == "Active" ? "#startExamModal" : "#registerExamModal")" 
+                                        onclick="@(exam.ExamStatus == "Active" ? $"setExamStartId({exam.Id})" : $"setExamRegisterId({exam.Id})")"    
+                                        class="btn primary-button"  
+                                        @(exam.ExamStatus == "Completed" ? "disabled" : "")>
+                                        <i class="bi bi-play-fill"></i>
+                                        @(exam.ExamStatus == "Active" ? "Start Exam" : 
+                                        exam.ExamStatus == "Completed" ? "Finished" : "Register")
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -66,6 +77,7 @@
         </div> 
     </div>
 </div> 
+
  <div class="modal fade" id="startExamModal" tabindex="-1" aria-labelledby="startExamLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -86,3 +98,23 @@
             </div>
         </div>
  </div>
+
+ 
+<div class="modal fade" id="registerExamModal" tabindex="-1" aria-labelledby="registerExamLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center"> 
+                <i class="fa-regular fa-calendar-check success-icon"></i>
+                <p class="mb-0">Do you want to register for this exam?</p>
+            </div>
+            <hr>
+            <div class="modal-footer justify-content-center">
+                <button type="button" onclick="confirmExamRegistration()" class="btn primary-button-v1">Register</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

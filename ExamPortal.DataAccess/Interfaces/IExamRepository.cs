@@ -8,5 +8,7 @@ namespace ExamPortal.DataAccess.Interfaces
 
         public Task<IEnumerable<Exam>> GetAllAsync();
 
+        
+
     }
 }

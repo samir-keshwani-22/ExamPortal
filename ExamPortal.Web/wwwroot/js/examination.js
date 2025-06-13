@@ -181,6 +181,7 @@ $(document).ready(function () {
   $(document).on("submit", "#addExamForm", function (event) {
     event.preventDefault();
     var result = checkForDateValidation($("#startDate").val(), $("#endDate").val());
+    debugger
     if (result == false) {
       toastr.error('Enter the valid start and end date.');
       return;
@@ -211,7 +212,7 @@ $(document).ready(function () {
 
   $(document).on("submit", "#editExamForm", function (event) {
     event.preventDefault();
-    var result = checkForDateValidation($("#startDate").val(), $("#endDate").val());
+    var result = checkForDateValidation($("#startDateEdit").val(), $("#endDateEdit").val());
     if (result == false) {
       toastr.error('Enter the valid start and end date.');
       return;

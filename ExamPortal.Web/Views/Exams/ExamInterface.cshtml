@@ -8,7 +8,8 @@
 <script src="~/js/exams.js"></script>
 
 <div onload="fullScreen(document.documentElement)" class="container-fluid h-100 bg-light d-flex p-0">
-    <div class="col-md-3 bg-white border-end d-flex flex-column p-0">
+
+<div class="col-md-3 bg-white border-end d-flex flex-column p-0">
         <div class="p-4 border-bottom">
             <h2 class="h5 fw-bold mb-2">@Model.Title</h2>
             <div class="text-muted small mb-1">Duration: @Model.TotalDuration min</div>
@@ -19,7 +20,7 @@
             @* @await Html.PartialAsync("_Timer") *@
         </div>
         <div class="p-4 border-top">
-            <button type="button" class="btn primary-button w-100" data-bs-toggle="modal" data-bs-target="#submitModal">
+            <button type="button" class="btn primary-button-v1  w-100" data-bs-toggle="modal" data-bs-target="#submitModal">
                 <i class="bi bi-flag"></i> Submit Exam
             </button>
         </div>
@@ -49,6 +50,7 @@
             </div>
         </div>
     </div>
+    
 </div>
 
 <div class="modal fade" id="submitModal" tabindex="-1">

@@ -7,5 +7,9 @@ namespace ExamPortal.BusinessLogic.Interfaces
         Task<ExamInterfaceViewModel> GetExamInterfaceViewModel(int examId);
         Task<QuestionCardViewModel> GetQuestionCardViewModel(int examId, int questionIndex);
 
+        Task<bool> CheckIfAlreadyRegisteredForExamAsync(int examId, string email);
+
+        Task<bool> RegisterForExamAsync(int examId, string email);
+
     }
 }

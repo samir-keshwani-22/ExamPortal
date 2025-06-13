@@ -5,23 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ExamPortal.DataAccess.DataContext;
 
-public interface IExamPortalContext
-{
-    DbSet<Role> Roles { get; set; }
-    DbSet<User> Users { get; set; }
-    DbSet<Exam> Exams { get; set; }
-    DbSet<ExamSchedule> ExamSchedules { get; set; }
-    DbSet<Question> Questions { get; set; }
-    DbSet<QuestionOption> QuestionOptions { get; set; }
-    DbSet<ExamAttempt> ExamAttempts { get; set; }
-    DbSet<Answer> Answers { get; set; }
-    DbSet<Announcement> Announcements { get; set; }
-    DbSet<Feedback> Feedbacks { get; set; }
-    DbSet<UserSession> UserSessions { get; set; }
-    DbSet<Notification> Notifications { get; set; }
-}
 
-public partial class ExamPortalContext : DbContext, IExamPortalContext
+public partial class ExamPortalContext : DbContext
 {
     public ExamPortalContext()
     {
@@ -45,6 +30,7 @@ public partial class ExamPortalContext : DbContext, IExamPortalContext
     public DbSet<Feedback> Feedbacks { get; set; }
     public DbSet<UserSession> UserSessions { get; set; }
     public DbSet<Notification> Notifications { get; set; }
+    public DbSet<ExamRegistration> ExamRegistrations { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseNpgsql("Name=ConnectionStrings:my_connection");
@@ -74,6 +60,31 @@ public partial class ExamPortalContext : DbContext, IExamPortalContext
                 .HasConstraintName("fk_user_role");
         });
 
+        modelBuilder.Entity<ExamRegistration>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.RegisteredAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+
+
+            entity.Property(e => e.IsNotificationSent)
+                .HasDefaultValue(false);
+
+            // Configure relationships
+            entity.HasOne(er => er.User)
+                .WithMany(u => u.ExamRegistrations)
+                .HasForeignKey(er => er.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(er => er.Exam)
+                .WithMany(e => e.Registrations)
+                .HasForeignKey(er => er.ExamId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+
         modelBuilder.Entity<Exam>(entity =>
         {
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
@@ -99,6 +110,8 @@ public partial class ExamPortalContext : DbContext, IExamPortalContext
            .WithMany()
            .HasForeignKey(a => a.SelectedOptionId)
            .OnDelete(DeleteBehavior.Restrict);
+
+
         modelBuilder.Entity<QuestionOption>()
             .HasOne(qo => qo.Question)
             .WithMany(q => q.Options)
@@ -111,7 +124,7 @@ public partial class ExamPortalContext : DbContext, IExamPortalContext
 
 
 
-// dotnet ef migrations add AddedDefaultValueForMarksExam  --startup-project ../ExamPortal.Web 
+// dotnet ef migrations add AddExamRegistrations  --startup-project ../ExamPortal.Web 
 // dotnet ef database update --startup-project ../ExamPortal.Web 
 // SITE KEY 6LfcDl8rAAAAAC7dvSte-Cw4vwCl1iKJXo60ztiX
 // SECRET KEY 6LfcDl8rAAAAAPP3ZNXf3pxSWZ-kXlhG8XnXxdBi

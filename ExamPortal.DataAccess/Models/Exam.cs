@@ -21,5 +21,8 @@ namespace ExamPortal.DataAccess.Models
         public ICollection<Question> Questions { get; set; }
         public ICollection<ExamSchedule> Schedules { get; set; }
         public ICollection<ExamAttempt> Attempts { get; set; }
+
+        public ICollection<ExamRegistration> Registrations { get; set; }
+        
     }
 }

@@ -28,7 +28,7 @@ public partial class User
 
     [StringLength(500)]
     public string? Address { get; set; }
-    
+
     [Column("zipcode")]
     [StringLength(10)]
     public string? Zipcode { get; set; }
@@ -70,6 +70,8 @@ public partial class User
     public ICollection<UserSession> UserSessions { get; set; }
     public ICollection<Notification> Notifications { get; set; }
     public ICollection<Feedback> Feedbacks { get; set; }
+
+    public ICollection<ExamRegistration> ExamRegistrations { get; set; }
 
 
 }

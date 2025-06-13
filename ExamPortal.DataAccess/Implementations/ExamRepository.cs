@@ -12,7 +12,7 @@ namespace ExamPortal.DataAccess.Implementations
         {
             _examPortalContext = examPortalContext;
         }
-        
+
         public async Task<Exam> GetExamByNameAsync(string name)
         {
             return await _examPortalContext.Exams.FirstOrDefaultAsync(e => e.Title.ToLower() == name.ToLower() && e.IsDeleted == false);
@@ -20,8 +20,10 @@ namespace ExamPortal.DataAccess.Implementations
 
         public async Task<IEnumerable<Exam>> GetAllAsync()
         {
-            return await _examPortalContext.Exams.Where(e => e.IsDeleted == false).ToListAsync();
+            return await _examPortalContext.Exams.Where(e => e.IsDeleted == false).OrderBy(e => e.Title).ToListAsync();
         }
+
+        
 
     }
 }
