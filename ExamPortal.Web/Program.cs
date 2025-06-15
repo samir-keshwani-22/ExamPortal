@@ -34,6 +34,8 @@ builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 builder.Services.AddScoped<IExamRepository, ExamRepository>();
 builder.Services.AddScoped<IQuestionOptionRepository, QuestionOptionRepository>();
 builder.Services.AddScoped<IExamRegistrationRepository, ExamRegistrationRepository>();
+builder.Services.AddScoped<IExamAttemptRepository, ExamAttemptRepository>();
+builder.Services.AddScoped<IAnswerRepository, AnswerRepository>();
 
 
 builder.Services.AddDbContext<ExamPortalContext>(q => q.UseNpgsql(conn));

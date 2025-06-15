@@ -9,6 +9,8 @@ namespace ExamPortal.BusinessLogic.ViewModel.Exams
         public int TotalDuration { get; set; }
         public QuestionCardViewModel FirstQuestion { get; set; }
         public DateTime StartDate { get; set; }
+
+        public int AttemptId { get; set; }
     }
 
     public class QuestionCardViewModel

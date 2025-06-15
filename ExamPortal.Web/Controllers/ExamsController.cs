@@ -24,20 +24,27 @@ namespace ExamPortal.Web.Controllers
         }
         public async Task<IActionResult> ExamInterface(int examId)
         {
+
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            var attemptId = await _examsService.CreateExamAttemptAsync(examId, email);
+
             ExamInterfaceViewModel model = await _examsService.GetExamInterfaceViewModel(examId);
+            model.AttemptId = attemptId;  
+
             DateTime examStartTime = DateTime.UtcNow;
             int examDuration = model.TotalDuration;
             DateTime endTime = examStartTime.AddMinutes(examDuration);
             int remainingSeconds = (int)(endTime - examStartTime).TotalSeconds;
             if (remainingSeconds < 0) remainingSeconds = 0;
             ViewBag.RemainingSeconds = remainingSeconds;
+
             return View(model);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetQuestionCard(int examId, int questionIndex)
         {
-            var questionVm = await _examsService.GetQuestionCardViewModel(examId, questionIndex);
+            var questionVm = await _examsService.GetQuestionCardViewModel(examId, questionIndex,0);
             if (questionVm == null)
                 return NotFound();
             return PartialView("_QuestionCard", questionVm);
@@ -58,11 +65,19 @@ namespace ExamPortal.Web.Controllers
                 bool success = await _examsService.RegisterForExamAsync(examId, email);
                 if (success == false)
                 {
-                    return BadRequest(new {  message = "Internal server error while registering for the exam.", errorCode = "InternalServerError" });
+                    return BadRequest(new { message = "Internal server error while registering for the exam.", errorCode = "InternalServerError" });
                 }
-                return Ok(new {success = true, message = "Successfully registered for the exam." });
+                return Ok(new { success = true, message = "Successfully registered for the exam." });
             }
 
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> SaveAnswer([FromBody] AnswerViewModel model)
+        {
+            await _examsService.SaveAnswerAsync(model);
+            return Ok();
         }
     }
 }

@@ -8,6 +8,7 @@
         <div class="text-muted  ">Marks: @Model.Marks</div>
     </div>
     <h2 class="h6 fw-bold mb-4">@Model.QuestionText</h2>
+    <input type="hidden" id="questionId" value="@Model.Id" />
 
     @if (Model.QuestionType == "MCQ" || Model.QuestionType == "TrueFalse")
     {

@@ -8,19 +8,23 @@ namespace ExamPortal.BusinessLogic.Implementations
     public class ExamsService : IExamsService
     {
         private readonly IExamRepository _examRepository;
+        private readonly IExamAttemptRepository _examAttemptRepository;
+        private readonly IAnswerRepository _answerRepository;
         private readonly IQuestionRepository _questionRepository;
         private readonly IQuestionOptionRepository _optionRepository;
         private readonly IUserRepository _userRepository;
 
         private readonly IExamRegistrationRepository _examRegistrationRepository;
 
-        public ExamsService(IExamRepository examRepository, IQuestionOptionRepository optionRepository, IQuestionRepository questionRepository, IExamRegistrationRepository examRegistrationRepository, IUserRepository userRepository)
+        public ExamsService(IExamRepository examRepository, IQuestionOptionRepository optionRepository, IQuestionRepository questionRepository, IExamRegistrationRepository examRegistrationRepository, IUserRepository userRepository, IExamAttemptRepository examAttemptRepository, IAnswerRepository answerRepository)
         {
             _examRepository = examRepository;
             _questionRepository = questionRepository;
             _optionRepository = optionRepository;
             _examRegistrationRepository = examRegistrationRepository;
             _userRepository = userRepository;
+            _examAttemptRepository = examAttemptRepository;
+            _answerRepository = answerRepository;
         }
 
         public async Task<bool> CheckIfAlreadyRegisteredForExamAsync(int examId, string email)
@@ -30,6 +34,25 @@ namespace ExamPortal.BusinessLogic.Implementations
                 return false;
             return await _examRegistrationRepository.CheckAlreadyRegisteredForExamAsync(examId, user.Id
             );
+        }
+
+        public async Task<int> CreateExamAttemptAsync(int examId, string email)
+        {
+            var user = await _userRepository.GetByEmailAsync(email);
+            if (user == null) throw new Exception("User not found.");
+
+            // bool alreadyAttempted = await _examAttemptRepository.CheckIfAlreadyAttemptedAsync(examId, user.Id);
+            // if (alreadyAttempted)
+            //     throw new Exception("Already attempted.");
+
+            var attempt = new ExamAttempt
+            {
+                UserId = user.Id,
+                ExamId = examId,
+                StartedAt = DateTime.UtcNow
+            };
+            await _examAttemptRepository.AddAsync(attempt);
+            return attempt.Id;
         }
 
         public async Task<ExamInterfaceViewModel> GetExamInterfaceViewModel(int examId)
@@ -68,7 +91,7 @@ namespace ExamPortal.BusinessLogic.Implementations
                 FirstQuestion = firstQuestionVm
             };
         }
-        public async Task<QuestionCardViewModel> GetQuestionCardViewModel(int examId, int questionIndex)
+        public async Task<QuestionCardViewModel> GetQuestionCardViewModel(int examId, int questionIndex, int attemptId)
         {
             var questions = (await _questionRepository.GetQuestionsByExamIdAsync(examId)).ToList();
             if (questionIndex < 0 || questionIndex >= questions.Count)
@@ -102,6 +125,27 @@ namespace ExamPortal.BusinessLogic.Implementations
             };
             await _examRegistrationRepository.AddAsync(registration);
             return true;
+        }
+
+        public async Task SaveAnswerAsync(AnswerViewModel model)
+        {
+            var existing = await _answerRepository.GetAnswerAsync(model.AttemptId, model.QuestionId);
+
+            if (existing != null)
+            {
+                existing.SelectedOptionId = model.SelectedOptionId;
+                await _answerRepository.UpdateAsync(existing);
+            }
+            else
+            {
+                var newAnswer = new Answer
+                {
+                    AttemptId = model.AttemptId,
+                    QuestionId = model.QuestionId,
+                    SelectedOptionId = model.SelectedOptionId
+                };
+                await _answerRepository.AddAsync(newAnswer);
+            }
         }
     }
 }
