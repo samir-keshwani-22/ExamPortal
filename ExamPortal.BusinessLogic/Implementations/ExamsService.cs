@@ -12,6 +12,7 @@ namespace ExamPortal.BusinessLogic.Implementations
         private readonly IAnswerRepository _answerRepository;
         private readonly IQuestionRepository _questionRepository;
         private readonly IQuestionOptionRepository _optionRepository;
+
         private readonly IUserRepository _userRepository;
 
         private readonly IExamRegistrationRepository _examRegistrationRepository;
@@ -95,7 +96,7 @@ namespace ExamPortal.BusinessLogic.Implementations
         {
             var questions = (await _questionRepository.GetQuestionsByExamIdAsync(examId)).ToList();
             if (questionIndex < 0 || questionIndex >= questions.Count)
-                return null;
+                return new QuestionCardViewModel();
             var question = questions[questionIndex];
             var options = await _optionRepository.GetOptionsByQuestionIdAsync(question.Id);
             return new QuestionCardViewModel
@@ -115,6 +116,12 @@ namespace ExamPortal.BusinessLogic.Implementations
             };
         }
 
+        public async Task<int?> GetSelectedOptionIdAsync(int attemptId, int questionId)
+        {
+            var answer = await _answerRepository.GetAnswerAsync(attemptId, questionId);
+            return answer?.SelectedOptionId;
+        }
+
         public async Task<bool> RegisterForExamAsync(int examId, string email)
         {
             User user = await _userRepository.GetByEmailAsync(email);
@@ -130,7 +137,6 @@ namespace ExamPortal.BusinessLogic.Implementations
         public async Task SaveAnswerAsync(AnswerViewModel model)
         {
             var existing = await _answerRepository.GetAnswerAsync(model.AttemptId, model.QuestionId);
-
             if (existing != null)
             {
                 existing.SelectedOptionId = model.SelectedOptionId;
@@ -146,6 +152,34 @@ namespace ExamPortal.BusinessLogic.Implementations
                 };
                 await _answerRepository.AddAsync(newAnswer);
             }
+        }
+
+        public async Task<bool> SubmitExamAsync(int attemptId)
+        {
+            ExamAttempt attempt = await _examAttemptRepository.GetByIdAsync(attemptId);
+            if (attempt == null)
+                return false;
+
+            attempt.SubmittedAt = DateTime.UtcNow;
+            List<Answer> answers = await _answerRepository.GetAnswersByAttemptIdAsync(attemptId);
+            double score = 0;
+            foreach (Answer answer in answers)
+            {
+                if (answer.SelectedOptionId == null)
+                    continue;
+                QuestionOption selectedOption = await _optionRepository.GetByIdAsync(answer.SelectedOptionId.Value);
+                if (selectedOption != null && selectedOption.IsCorrect)
+                {
+                    Question question = await _questionRepository.GetByIdAsync(selectedOption.QuestionId);
+                    if (question != null)
+                    {
+                        score += question.Marks;
+                    }
+                }
+            }
+            attempt.Score = score;
+            await _examAttemptRepository.UpdateAsync(attempt);
+            return true;
         }
     }
 }

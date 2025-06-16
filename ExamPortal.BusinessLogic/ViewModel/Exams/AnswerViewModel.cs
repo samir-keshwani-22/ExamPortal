@@ -5,6 +5,6 @@ namespace ExamPortal.BusinessLogic.ViewModel.Exams
            public int AttemptId { get; set; }
 
         public int QuestionId { get; set; }
-        public int SelectedOptionId { get; set; } 
+        public int? SelectedOptionId { get; set; } 
     }
 }

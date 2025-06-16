@@ -13,11 +13,14 @@ namespace ExamPortal.DataAccess.Implementations
             _examPortalContext = examPortalContext;
         }
 
-        public async Task<Answer> GetAnswerAsync(int attemptId, int questionId)
+        public async Task<Answer?> GetAnswerAsync(int attemptId, int questionId)
         {
             return await _examPortalContext.Answers.FirstOrDefaultAsync(a => a.AttemptId == attemptId && a.QuestionId == questionId);
-
         }
 
+        public async Task<List<Answer>> GetAnswersByAttemptIdAsync(int attemptId)
+        {
+            return await _examPortalContext.Answers.Where(a => a.AttemptId == attemptId).ToListAsync();
+        }
     }
 }

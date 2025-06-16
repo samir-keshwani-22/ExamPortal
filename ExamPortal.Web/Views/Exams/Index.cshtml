@@ -54,7 +54,7 @@
                                         data-bs-target="@(exam.ExamStatus == "Active" ? "#startExamModal" : "#registerExamModal")" 
                                         onclick="@(exam.ExamStatus == "Active" ? $"setExamStartId({exam.Id})" : $"setExamRegisterId({exam.Id})")"    
                                         class="btn primary-button"  
-                                        @(exam.ExamStatus == "Completed" ? "disabled" : "")>
+                                        @(exam.ExamStatus == "Completed" || exam.TotalQuestion==0 ? "disabled" : "")>
                                         <i class="bi bi-play-fill"></i>
                                         @(exam.ExamStatus == "Active" ? "Start Exam" : 
                                         exam.ExamStatus == "Completed" ? "Finished" : "Register")

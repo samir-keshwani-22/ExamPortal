@@ -74,7 +74,6 @@ function enterFullscreen() {
       element
         .requestFullscreen()
         .then(() => {
-          console.log("Fullscreen mode activated");
           resolve();
         })
         .catch((err) => {
@@ -158,10 +157,10 @@ function showFullscreenWarning() {
             <p class="text-muted small">Click "Re-enter Fullscreen" to continue or "Submit Exam" to end the exam.</p>
           </div>
           <div class="modal-footer justify-content-between">
-            <button id="reenterFsBtn" class="btn btn-primary"><i class="bi bi-fullscreen"></i> Re-enter Fullscreen</button>
+            <button id="reenterFsBtn" class="btn primary-button-v1"><i class="bi bi-fullscreen"></i> Re-enter Fullscreen</button>
             <button id="submitExamBtn" class="btn btn-danger"><i class="bi bi-box-arrow-right"></i> Submit Exam</button>
           </div>
-        </div>
+        </div>   
       </div>
     </div>
   `;
@@ -175,12 +174,10 @@ function showFullscreenWarning() {
   );
   modal.show();
 
-  // Re-enter fullscreen
   document.getElementById("reenterFsBtn").onclick = () => {
     enterFullscreen().then(() => modal.hide());
   };
 
-  // Submit exam
   document.getElementById("submitExamBtn").onclick = () => {
     modal.hide();
     if (typeof submitExam === "function") {
@@ -191,69 +188,56 @@ function showFullscreenWarning() {
   };
 }
 
-// Function to initialize fullscreen functionality
 function initializeFullscreen() {
   console.log("Initializing fullscreen mode...");
 
-  // Don't try to enter fullscreen automatically on page load
-  // Instead, show a prompt to user
   showFullscreenPrompt();
 
-  // Add event listeners for fullscreen changes
   document.addEventListener("fullscreenchange", handleFullscreenChange);
   document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
   document.addEventListener("msfullscreenchange", handleFullscreenChange);
   document.addEventListener("mozfullscreenchange", handleFullscreenChange);
 
-  // Prevent right-click context menu during exam
   document.addEventListener("contextmenu", function (e) {
     e.preventDefault();
     return false;
   });
 
-  // Prevent certain key combinations during exam
   document.addEventListener("keydown", function (e) {
-    // Prevent F11 (fullscreen toggle)
     if (e.key === "F11") {
       e.preventDefault();
       return false;
     }
 
-    // Prevent Alt+Tab (window switching)
     if (e.altKey && e.key === "Tab") {
       e.preventDefault();
       return false;
     }
 
-    // Prevent Ctrl+Shift+I (Developer tools)
     if (e.ctrlKey && e.shiftKey && e.key === "I") {
       e.preventDefault();
       return false;
     }
 
-    // Prevent F12 (Developer tools)
     if (e.key === "F12") {
       e.preventDefault();
       return false;
     }
 
-    // Prevent Ctrl+U (View source)
     if (e.ctrlKey && e.key === "u") {
       e.preventDefault();
       return false;
     }
   });
 
-  // Detect if user switches tabs or windows
+
   document.addEventListener("visibilitychange", function () {
     if (document.hidden) {
       console.log("User switched tab/window - Security violation detected");
-      // You could log this event to your server for monitoring
-      // logSecurityViolation('tab_switch');
+
     }
   });
 
-  // Prevent printing during exam
   window.addEventListener("beforeprint", function (e) {
     e.preventDefault();
     alert("Printing is not allowed during the exam.");
@@ -263,10 +247,8 @@ function initializeFullscreen() {
   console.log("Fullscreen mode initialized successfully");
 }
 
-// Function to show fullscreen prompt
 function showFullscreenPrompt() {
   if (!isFullscreen()) {
-    // Create a custom modal for fullscreen prompt
     const fullscreenModal = `
             <div class="modal fade" id="fullscreenModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
                 <div class="modal-dialog modal-dialog-centered">
@@ -283,7 +265,7 @@ function showFullscreenPrompt() {
                             <p class="text-muted small mt-2">This helps prevent unauthorized access to other applications during the exam.</p>
                         </div>
                         <div class="modal-footer justify-content-center">
-                            <button type="button" class="btn btn-primary" onclick="activateFullscreen()">
+                            <button type="button" class="btn primary-button-v1" onclick="activateFullscreen()">
                                 <i class="bi bi-arrows-fullscreen"></i> Enter Fullscreen
                             </button>
                         </div>
@@ -292,12 +274,10 @@ function showFullscreenPrompt() {
             </div>
         `;
 
-    // Add modal to body if it doesn't exist
     if (!document.getElementById("fullscreenModal")) {
       document.body.insertAdjacentHTML("beforeend", fullscreenModal);
     }
 
-    // Show the modal
     const modal = new bootstrap.Modal(
       document.getElementById("fullscreenModal")
     );
@@ -305,11 +285,9 @@ function showFullscreenPrompt() {
   }
 }
 
-// Function to activate fullscreen from user interaction
 function activateFullscreen() {
   enterFullscreen()
     .then(() => {
-      // Hide the modal
       const modal = bootstrap.Modal.getInstance(
         document.getElementById("fullscreenModal")
       );
@@ -323,24 +301,4 @@ function activateFullscreen() {
         "Unable to enter fullscreen mode. Please try manually pressing F11 or contact support."
       );
     });
-}
-
-// Function to log security violations (optional)
-function logSecurityViolation(violationType) {
-  // You can implement this to log security violations to your server
-  $.ajax({
-    url: "/Exams/LogSecurityViolation",
-    type: "POST",
-    data: {
-      attemptId: $("#attemptId").val(),
-      violationType: violationType,
-      timestamp: new Date().toISOString(),
-    },
-    success: function (response) {
-      console.log("Security violation logged");
-    },
-    error: function () {
-      console.log("Failed to log security violation");
-    },
-  });
 }

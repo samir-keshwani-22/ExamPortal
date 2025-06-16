@@ -24,27 +24,23 @@ namespace ExamPortal.Web.Controllers
         }
         public async Task<IActionResult> ExamInterface(int examId)
         {
-
-            var email = User.FindFirstValue(ClaimTypes.Email);
-            var attemptId = await _examsService.CreateExamAttemptAsync(examId, email);
-
+            string email = User.FindFirstValue(ClaimTypes.Email);
+            int attemptId = await _examsService.CreateExamAttemptAsync(examId, email);
             ExamInterfaceViewModel model = await _examsService.GetExamInterfaceViewModel(examId);
-            model.AttemptId = attemptId;  
-
+            model.AttemptId = attemptId;
             DateTime examStartTime = DateTime.UtcNow;
             int examDuration = model.TotalDuration;
             DateTime endTime = examStartTime.AddMinutes(examDuration);
             int remainingSeconds = (int)(endTime - examStartTime).TotalSeconds;
             if (remainingSeconds < 0) remainingSeconds = 0;
             ViewBag.RemainingSeconds = remainingSeconds;
-
             return View(model);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetQuestionCard(int examId, int questionIndex)
         {
-            var questionVm = await _examsService.GetQuestionCardViewModel(examId, questionIndex,0);
+            QuestionCardViewModel questionVm = await _examsService.GetQuestionCardViewModel(examId, questionIndex, 0);
             if (questionVm == null)
                 return NotFound();
             return PartialView("_QuestionCard", questionVm);
@@ -54,7 +50,7 @@ namespace ExamPortal.Web.Controllers
 
         public async Task<IActionResult> RegisterForExam(int examId)
         {
-            var email = User.FindFirstValue(ClaimTypes.Email);
+            string email = User.FindFirstValue(ClaimTypes.Email);
             bool checkIfAlreadyRegistered = await _examsService.CheckIfAlreadyRegisteredForExamAsync(examId, email);
             if (checkIfAlreadyRegistered)
             {
@@ -72,12 +68,34 @@ namespace ExamPortal.Web.Controllers
 
         }
 
-
         [HttpPost]
         public async Task<IActionResult> SaveAnswer([FromBody] AnswerViewModel model)
         {
             await _examsService.SaveAnswerAsync(model);
             return Ok();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAnswer(int attemptId, int questionId)
+        {
+            int? selectedOptionId = await _examsService.GetSelectedOptionIdAsync(attemptId, questionId);
+            if (selectedOptionId == null)
+                return NotFound();
+            return Ok(new { selectedOptionId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SubmitExam(int attemptId)
+        {
+            bool success = await _examsService.SubmitExamAsync(attemptId);
+            if (success)
+            {
+                return Ok(new { success = true, message = "Exam submitted successfully." });
+            }
+            else
+            {
+                return BadRequest(new { success = false, message = "Failed to submit the exam." });
+            }
         }
     }
 }
