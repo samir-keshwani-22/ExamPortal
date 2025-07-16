@@ -1,1 +1,32 @@
- 
+@{
+    int remainingSeconds = ViewBag.RemainingSeconds ?? 0;
+}
+
+<div class="alert alert-dark d-flex align-items-center">
+    <i class="bi bi-clock me-2"></i>
+    <div>
+        <strong>Time Remaining:</strong>
+        <span id="timerDisplay"></span>
+    </div>
+</div>
+
+<script>
+    var remainingSeconds = @remainingSeconds;
+
+    function pad(n) { return n < 10 ? '0' + n : n; }
+
+    function updateTimer() {
+        if (remainingSeconds < 0) remainingSeconds = 0;
+        var minutes = Math.floor(remainingSeconds / 60);
+        var seconds = remainingSeconds % 60;
+        document.getElementById('timerDisplay').textContent = pad(minutes) + ':' + pad(seconds);
+        if (remainingSeconds === 0) {
+            clearInterval(timerInterval);
+            // submitExam();
+            alert("Time's up! Exam will be submitted.");
+        }
+        remainingSeconds--;
+    }
+    updateTimer();
+    var timerInterval = setInterval(updateTimer, 1000);
+</script>

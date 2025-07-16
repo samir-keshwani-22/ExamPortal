@@ -1,0 +1,108 @@
+@using ExamPortal.BusinessLogic.ViewModel.Exams
+@model ExamResultViewModel
+@{
+    ViewData["Title"] = "Exam Results";
+    Layout = "_Layout";
+    string GetPerformanceText(double percentage) => percentage >= 80 ? "Excellent" : percentage >= 60 ? "Good" : percentage
+    >= 40 ? "Average" : "Needs Improvement";
+    string GetPerformanceColor(double percentage) =>
+    percentage >= 80 ? "text-success bg-success-subtle" :
+    percentage >= 60 ? "text-primary bg-primary-subtle" :
+    percentage >= 40 ? "text-warning bg-warning-subtle" :
+    "text-danger bg-danger-subtle";
+
+
+}
+
+<div class="container py-5">
+    <h1 class="mb-1 fw-bold">Exam Results</h1>
+
+    <div class="bg-white border shadow-sm rounded-4 p-4 mb-4 text-center">
+        <div class="mb-4">
+            <div class="mx-auto  rounded-circle d-flex align-items-center justify-content-center"
+                style="width: 80px; height: 80px; @GetPerformanceColor(Model.Percentage)">
+                <i class="bi bi-award-fill fs-2"></i>
+            </div>
+            <h2 class="fw-bold">@Model.Percentage.ToString("0.0")%</h2>
+            <p class="text-muted mb-0">@GetPerformanceText(@Model.Percentage)</p>
+        </div>
+
+        <div class="row text-center">
+            <div class="col-md-4">
+                <div class="bg-light p-3 rounded">
+                    <i class="bi bi-check-circle-fill text-success"></i>
+                    <div class="fs-4 fw-bold">@Model.CorrectAnswers</div>
+                    <div class="text-muted">Correct</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="bg-light p-3 rounded">
+                    <i class="bi bi-x-circle-fill text-danger"></i>
+                    <div class="fs-4 fw-bold">@(Model.TotalQuestions - Model.CorrectAnswers)</div>
+                    <div class="text-muted">Incorrect</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="bg-light p-3 rounded">
+                    <i class="bi bi-award text-primary"></i>
+                    <div class="fs-4 fw-bold">@Model.ObtainedMarks</div>
+                    <div class="text-muted">Marks Scored</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="bg-white border shadow-sm rounded-4 mb-4">
+        <div class="p-4 border-bottom">
+            <h5 class="fw-bold mb-0"><i class="bi bi-bar-chart-fill me-2"></i>Question Analysis</h5>
+        </div>
+        <div class="p-4">
+            @foreach (var answer in Model.QuestionResults.Select((val, i) => new { val, i }))
+            {
+                <div class="border rounded p-3 mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="text-muted">Question @(@answer.i + 1): @answer.val.QuestionText</span>
+                            @if (@answer.val.IsCorrect)
+                            {
+                                <i class="bi bi-check-circle-fill text-success"></i>
+                            }
+                            else
+                            {
+                                <i class="bi bi-x-circle-fill text-danger"></i>
+                            }
+                    </div>
+                    <span class="badge rounded-pill bg-secondary">
+                        @answer.val.Marks / @answer.val.Marks marks
+                    </span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <div class="text-sm">
+                        <span class="text-muted">Your Answer:</span>
+                        <span class="fw-semibold @(answer.val.IsCorrect ? "text-success" : "text-danger")">
+                            @(
+                                                        answer.val.SelectedOptionText == null
+                                                        ? "Not Answered"
+                                                        : answer.val.SelectedOptionText
+                                                        )
+                        </span>
+                    </div>
+                    <span class="badge px-3 py-1 text-white @(answer.val.IsCorrect ? "bg-success" : "bg-danger")">
+                        @(answer.val.IsCorrect ? "Correct" : "Incorrect")
+                    </span>
+                </div>
+                <div class="mt-2 text-muted small">
+                    Correct Answer: <strong>@answer.val.CorrectOptionText</strong>
+                </div>
+            </div>
+                        }
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="/Exams" class="btn btn-dark px-4 py-2">
+            <i class="bi bi-arrow-repeat me-1"></i> Take Another Exam
+        </a>
+    </div>
+</div>

@@ -16,7 +16,7 @@
             <div class="text-muted small">Total Marks: @Model.TotalMarks</div>
         </div>
         <div class="p-4 border-bottom">
-            @* @await Html.PartialAsync("_Timer") *@
+            @await Html.PartialAsync("_Timer")
         </div>
         <div class="p-4 border-top">
             <button type="button" class="btn primary-button-v1  w-100" data-bs-toggle="modal"
@@ -103,9 +103,9 @@
                         type: 'POST',
                         data: { attemptId: attemptId },
                         success: function () {
-                            @* window.location.href = `/Exams/Result?attemptId=${attemptId}`; *@
-                                alert("Submitted")
-                        },
+                            window.location.href = `/Exams/ResultPage?attemptId=${attemptId}`;
+                            @* alert("Submitted") *@
+                            },
                         error: function () {
                             toastr.error("Failed to submit exam.");
                         }

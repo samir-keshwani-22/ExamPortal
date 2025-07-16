@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace ExamPortal.Web.Controllers;
 
-// [Authorize(Roles = "admin")]
+[Authorize(Roles = "admin")]
 [Route("[controller]")]
 public class ExaminationController : Controller
 {

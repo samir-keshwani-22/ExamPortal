@@ -116,6 +116,50 @@ namespace ExamPortal.BusinessLogic.Implementations
             };
         }
 
+        public async Task<ExamResultViewModel> GetResultAsync(int attemptId)
+        {
+            if (attemptId == null)
+                return null;
+            ExamAttempt? attempt = await _examAttemptRepository.GetAttemptWithDetailsAsync(attemptId);
+            int totalQuestions = attempt!.Answers.Count;
+            int correctAnswers = 0;
+            int obtainedMarks = 0;
+            List<QuestionResultViewModel> questionResults = new();
+            foreach (var answer in attempt.Answers)
+            {
+                var question = answer.Question;
+                var selectedOption = answer.SelectedOption;
+                var correctOption = question.Options.FirstOrDefault(o => o.IsCorrect);
+                bool isCorrect = selectedOption != null && selectedOption.IsCorrect;
+                if (isCorrect)
+                {
+                    correctAnswers++;
+                    obtainedMarks += question.Marks;
+                }
+                questionResults.Add(new QuestionResultViewModel
+                {
+                    QuestionId = question.Id,
+                    QuestionText = question.QuestionText,
+                    SelectedOptionText = selectedOption?.OptionText,
+                    CorrectOptionText = correctOption?.OptionText,
+                    IsCorrect = isCorrect,
+                    Marks = question.Marks
+                });
+            }
+            int totalMarks = attempt.Exam.TotalMarks ?? questionResults.Sum(q => q.Marks);
+            double percentage = totalMarks > 0 ? (obtainedMarks * 100.0) / totalMarks : 0;
+            return new ExamResultViewModel
+            {
+                AttemptId = attempt.Id,
+                ExamTitle = attempt.Exam.Title,
+                TotalQuestions = totalQuestions,
+                CorrectAnswers = correctAnswers,
+                ObtainedMarks = obtainedMarks,
+                Percentage = percentage,
+                QuestionResults = questionResults
+            };
+        }
+
         public async Task<int?> GetSelectedOptionIdAsync(int attemptId, int questionId)
         {
             var answer = await _answerRepository.GetAnswerAsync(attemptId, questionId);

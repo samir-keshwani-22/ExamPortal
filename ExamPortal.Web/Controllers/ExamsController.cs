@@ -97,5 +97,14 @@ namespace ExamPortal.Web.Controllers
                 return BadRequest(new { success = false, message = "Failed to submit the exam." });
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ResultPage(int attemptId)
+        {
+            var result = await _examsService.GetResultAsync(attemptId);
+            if (result == null)
+                return NotFound();
+            return View("ResultPage", result);
+        }
     }
 }

@@ -17,6 +17,7 @@ namespace ExamPortal.BusinessLogic.Interfaces
         Task<int?> GetSelectedOptionIdAsync(int attemptId, int questionId);
 
         Task<bool> SubmitExamAsync(int attemptId);
+        Task<ExamResultViewModel> GetResultAsync(int attemptId);
 
 
 

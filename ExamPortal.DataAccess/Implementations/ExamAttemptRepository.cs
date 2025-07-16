@@ -18,4 +18,17 @@ public class ExamAttemptRepository : GenericRepository<ExamAttempt>, IExamAttemp
         return await _examPortalContext.ExamAttempts
             .AnyAsync(a => a.ExamId == examId && a.UserId == userId);
     }
+
+    public async Task<ExamAttempt?> GetAttemptWithDetailsAsync(int attemptId)
+    {
+        return await _examPortalContext.ExamAttempts.
+        Include(e => e.Exam)
+        .Include(a => a.Answers)
+            .ThenInclude(q => q.Question)
+                .ThenInclude(o => o.Options)
+        .Include(a => a.Answers)
+            .ThenInclude(ans => ans.SelectedOption)
+            .FirstOrDefaultAsync(a => a.Id == attemptId);
+        throw new NotImplementedException();
+    }
 }

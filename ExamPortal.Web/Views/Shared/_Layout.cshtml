@@ -1,6 +1,7 @@
 ﻿@using System.Security.Claims
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -28,41 +29,41 @@
                                 alt="EXAM_PORTAL Logo">
                         </div>
                         <ul class="sidebar-nav">
-                            <li class="sidebar-item">
+                             <li class="sidebar-item">
                                 <a href="@Url.Action("Index", "Home")"
                                     class="sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "Home" ? "active" : "")">
                                     <i class="fas fa-tachometer-alt pe-2"></i>Dashboard
                                 </a>
-                            </li>
-                            @* @if (User.FindFirstValue(ClaimTypes.Role) == "student")
-                            { *@
-                            <li class="sidebar-item">
-                                <a asp-action="Index" asp-controller="Exams"
-                                    class="sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "Exams" ? "active" : "")">
-                                    <i class="bi bi-clipboard2-check-fill pe-2"></i>
-                                    Exams
-                                </a>
-                            </li>
-                            @* }
+                            </li>  
+                            @if (User.FindFirstValue(ClaimTypes.Role) == "student")
+                            {
+                                <li class="sidebar-item">
+                                    <a asp-action="Index" asp-controller="Exams"
+                                        class="sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "Exams" ? "active" : "")">
+                                        <i class="bi bi-clipboard2-check-fill pe-2"></i>
+                                        Exams
+                                    </a>
+                                </li>
+                            }
                             @if (User.FindFirstValue(ClaimTypes.Role) == "admin")
-                            { *@
-                            <li class="sidebar-item">
-                                <a asp-action="Index" asp-controller="Examination"
-                                    class="sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "Examination" ? "active" : "")">
-                                    <i class="bi bi-journal-album pe-2"></i>Examination
-                                </a>
-                            </li>
-                            @* }
+                            {
+                                <li class="sidebar-item">
+                                    <a asp-action="Index" asp-controller="Examination"
+                                        class="sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "Examination" ? "active" : "")">
+                                        <i class="bi bi-journal-album pe-2"></i>Examination
+                                    </a>
+                                </li>
+                            }
 
                             @if (User.FindFirstValue(ClaimTypes.Role) == "admin")
-                            { *@
-                            <li class="sidebar-item">
-                                <a asp-action="Index" asp-controller="Student"
-                                    class="sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "Student" ? "active" : "")">
-                                    <i class="fas fa-user pe-2"></i>Student
-                                </a>
-                            </li>
-                            @* } *@
+                            {
+                                <li class="sidebar-item">
+                                    <a asp-action="Index" asp-controller="Student"
+                                        class="sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "Student" ? "active" : "")">
+                                        <i class="fas fa-user pe-2"></i>Student
+                                    </a>
+                                </li>
+                            }
                         </ul>
                     </div>
                 </aside>
@@ -143,21 +144,29 @@
                     <a href="@Url.Action("Index", "Home")"
                         class="sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "Home" ? "active" : "")"><i
                             class="fas fa-tachometer-alt pe-2"></i>Dashboard</a>
-                </li>
-
-                <li class="sidebar-item">
-                    <a asp-action="Index" asp-controller="Exams"
-                        class="sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "Exams" ? "active" : "")">
-                        <i class="bi bi-clipboard2-check-fill pe-2"></i>
-                        Exams
-                    </a>
-                </li>
-                <li class="sidebar-item"><a asp-action="Index" asp-controller="Examination"
-                        class="sidebar-link  @(ViewContext.RouteData.Values["controller"].ToString() == "Examination" ? "active" : "") ">
-                        <i class="bi bi-journal-album pe-2"></i>Examination</a></li>
-                <li class="sidebar-item"><a asp-action="Index" asp-controller="Student"
-                        class="sidebar-link  @(ViewContext.RouteData.Values["controller"].ToString() == "Student" ? "active" : "") "><i
-                            class="fas fa-user pe-2"></i>Student</a></li>
+                </li>  
+                @if (User.FindFirstValue(ClaimTypes.Role) == "student")
+                {
+                    <li class="sidebar-item">
+                        <a asp-action="Index" asp-controller="Exams"
+                            class="sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "Exams" ? "active" : "")">
+                            <i class="bi bi-clipboard2-check-fill pe-2"></i>
+                            Exams
+                        </a>
+                    </li>
+                }
+                @if (User.FindFirstValue(ClaimTypes.Role) == "admin")
+                {
+                    <li class="sidebar-item"><a asp-action="Index" asp-controller="Examination"
+                            class="sidebar-link  @(ViewContext.RouteData.Values["controller"].ToString() == "Examination" ? "active" : "") ">
+                            <i class="bi bi-journal-album pe-2"></i>Examination</a></li>
+                }
+                @if (User.FindFirstValue(ClaimTypes.Role) == "admin")
+                {
+                    <li class="sidebar-item"><a asp-action="Index" asp-controller="Student"
+                            class="sidebar-link  @(ViewContext.RouteData.Values["controller"].ToString() == "Student" ? "active" : "") "><i
+                                class="fas fa-user pe-2"></i>Student</a></li>
+                }
             </ul>
         </div>
     </div>
