@@ -5,5 +5,7 @@ namespace ExamPortal.DataAccess.Interfaces
     public interface IExamRegistrationRepository : IGenericRepository<ExamRegistration>
     {
         Task<bool> CheckAlreadyRegisteredForExamAsync(int examId, int userId);
+
+        Task<List<ExamRegistration>> GetUpcomingRegistrationsByUserIdAsync(int userId);
     }
 }

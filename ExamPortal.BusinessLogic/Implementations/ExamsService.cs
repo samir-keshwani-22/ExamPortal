@@ -205,9 +205,28 @@ namespace ExamPortal.BusinessLogic.Implementations
                 return false;
 
             attempt.SubmittedAt = DateTime.UtcNow;
-            List<Answer> answers = await _answerRepository.GetAnswersByAttemptIdAsync(attemptId);
+            List<Question> allQuestions = await _questionRepository.GetQuestionsByExamIdAsync(attempt.ExamId);
+
+            List<Answer> existingAnswers = await _answerRepository.GetAnswersByAttemptIdAsync(attemptId);
+
+            var answeredQuestionIds = existingAnswers.Select(a => a.QuestionId).ToHashSet();
+
+            var unansweredQuestions = allQuestions.Where(q => !answeredQuestionIds.Contains(q.Id)).ToList();
+
+            foreach (var question in unansweredQuestions)
+            {
+                var unansweredAnswer = new Answer
+                {
+                    AttemptId = attemptId,
+                    QuestionId = question.Id,
+                    SelectedOptionId = null
+                };
+                await _answerRepository.AddAsync(unansweredAnswer);
+                existingAnswers.Add(unansweredAnswer); 
+            }
+
             double score = 0;
-            foreach (Answer answer in answers)
+            foreach (Answer answer in existingAnswers)
             {
                 if (answer.SelectedOptionId == null)
                     continue;

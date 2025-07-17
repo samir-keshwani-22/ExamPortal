@@ -104,7 +104,7 @@
                         data: { attemptId: attemptId },
                         success: function () {
                             window.location.href = `/Exams/ResultPage?attemptId=${attemptId}`;
-                            @* alert("Submitted") *@
+                    
                             },
                         error: function () {
                             toastr.error("Failed to submit exam.");

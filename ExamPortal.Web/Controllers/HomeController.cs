@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using ExamPortal.Web.Models;
+using System.Security.Claims;
 namespace ExamPortal.Web.Controllers;
 public class HomeController : Controller
 {
@@ -13,7 +14,14 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        return View();
+        var role = User.FindFirstValue(ClaimTypes.Role);
+
+        return role switch
+        {
+            "admin" => RedirectToAction("Index", "AdminDashboard"),
+            "student" => RedirectToAction("Index", "StudentDashboard"),
+            _ => RedirectToAction("AccessDenied", "Account")
+        };
     }
 
     public IActionResult Privacy()

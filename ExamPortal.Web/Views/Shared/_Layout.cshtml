@@ -31,7 +31,7 @@
                         <ul class="sidebar-nav">
                              <li class="sidebar-item">
                                 <a href="@Url.Action("Index", "Home")"
-                                    class="sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "Home" ? "active" : "")">
+                                    class="sidebar-link @((ViewContext.RouteData.Values["controller"].ToString() == "AdminDashboard")||(ViewContext.RouteData.Values["controller"].ToString() == "StudentDashboard") ? "active" : "")">
                                     <i class="fas fa-tachometer-alt pe-2"></i>Dashboard
                                 </a>
                             </li>  

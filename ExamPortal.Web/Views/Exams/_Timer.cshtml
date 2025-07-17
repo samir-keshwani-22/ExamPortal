@@ -22,8 +22,8 @@
         document.getElementById('timerDisplay').textContent = pad(minutes) + ':' + pad(seconds);
         if (remainingSeconds === 0) {
             clearInterval(timerInterval);
-            // submitExam();
-            alert("Time's up! Exam will be submitted.");
+            submitExam();
+
         }
         remainingSeconds--;
     }
