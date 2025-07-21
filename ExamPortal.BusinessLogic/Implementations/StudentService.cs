@@ -70,9 +70,9 @@ public class StudentService : IStudentService
     }
 
 
-    public async Task<List<StudentViewModel>> GetAllStudentAsync()
+    public async Task<List<StudentViewModel>> GetAllStudentAsync(string sortBy = "FirstName", bool ascending = true)
     {
-        List<User> user = await _userRepository.GetAllStudents();
+        List<User> user = await _userRepository.GetAllStudents(sortBy, ascending);
         return user.Select(student => new StudentViewModel
         {
             Id = student.Id,
@@ -100,6 +100,6 @@ public class StudentService : IStudentService
         };
     }
 
-    
+
 
 }

@@ -1,5 +1,6 @@
 var studentToDeleteId;
-
+let currentSort = "FirstName";
+let sortAsc = true;
 function openAddStudentModal() {
     $.get("/Student/AddStudent", function (data) {
         $("#addStudentContainer").html(data);
@@ -8,14 +9,29 @@ function openAddStudentModal() {
     });
 }
 
+
 function fetchStudent() {
     $.ajax({
-        url: `/Student/GetStudentListPartial`,
+        url: `/Student/GetStudentListPartial?sortBy=${currentSort}&ascending=${sortAsc}`,
         type: 'GET',
         success: function (data) {
             $("#studentListContainer").html(data);
+            
         }
-    })
+    });
+}
+
+ 
+
+function sortTable(column) {
+    if (currentSort === column) {
+        sortAsc = !sortAsc;
+    } else {
+        currentSort = column;
+        sortAsc = true;
+    }
+
+    fetchStudent();
 }
 
 function deleteStudent(studentId) {

@@ -13,9 +13,20 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         _examPortalContext = examPortalContext;
     }
 
-    public async Task<List<User>> GetAllStudents()
+    public async Task<List<User>> GetAllStudents(string sortBy, bool ascending)
     {
-        return await _examPortalContext.Users.Where(u => u.RoleId == 1 && u.IsDeleted == false).OrderBy(u => u.FirstName).ToListAsync();
+        var query = _examPortalContext.Users
+       .Where(u => u.RoleId == 1 && u.IsDeleted == false);
+
+        query = sortBy switch
+        {
+            "FirstName" => ascending ? query.OrderBy(u => u.FirstName) : query.OrderByDescending(u => u.FirstName),
+            "LastName" => ascending ? query.OrderBy(u => u.LastName) : query.OrderByDescending(u => u.LastName),
+            "Email" => ascending ? query.OrderBy(u => u.Email) : query.OrderByDescending(u => u.Email),
+            _ => query.OrderBy(u => u.FirstName)
+        };
+
+        return await query.ToListAsync();
     }
 
 
@@ -30,4 +41,8 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         return await _examPortalContext.Users.FirstOrDefaultAsync(u => u.ResetToken.Equals(token));
     }
 
+    public async Task<int> GetTotalUserCountAsync()
+    {
+        return await _examPortalContext.Users.CountAsync(u => u.IsDeleted == false);
+    }
 }

@@ -29,12 +29,12 @@
                                 alt="EXAM_PORTAL Logo">
                         </div>
                         <ul class="sidebar-nav">
-                             <li class="sidebar-item">
+                            <li class="sidebar-item">
                                 <a href="@Url.Action("Index", "Home")"
-                                    class="sidebar-link @((ViewContext.RouteData.Values["controller"].ToString() == "AdminDashboard")||(ViewContext.RouteData.Values["controller"].ToString() == "StudentDashboard") ? "active" : "")">
+                                    class="sidebar-link @((ViewContext.RouteData.Values["controller"].ToString() == "AdminDashboard") || (ViewContext.RouteData.Values["controller"].ToString() == "StudentDashboard") ? "active" : "")">
                                     <i class="fas fa-tachometer-alt pe-2"></i>Dashboard
                                 </a>
-                            </li>  
+                            </li>
                             @if (User.FindFirstValue(ClaimTypes.Role) == "student")
                             {
                                 <li class="sidebar-item">
@@ -74,11 +74,33 @@
                 <nav class="header">
                     <button class="btn btn-light" id="toggleSidebar"><i class="fas fa-bars"></i></button>
                     <div class="dropdown d-flex">
-                        <a class="icon-container text-decoration-none text-white">
-                            <i class="bi bi-bell pt-1"></i>
-                        </a>
+                        <div class="dropdown me-2" id="notificationDropdown">
+                            <button
+                                class="btn position-relative bg-white border rounded-circle shadow-sm px-3 py-2 me-2"
+                                data-bs-toggle="dropdown" aria-expanded="false" id="notificationBell"
+                                title="View Announcements">
+                                <i class="bi bi-bell fs-5 text-dark"></i>
+                                <span id="notificationDot" style="  
+                                    transform:translate(-93%, -4%) !important; 
+                                    padding: 0.35rem !important;"
+                                    class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-white rounded-circle d-none">
+                                    <span class="visually-hidden">New alerts</span>
+                                </span>
 
-                        <a class="btn py-0" href="#" data-bs-toggle="dropdown"
+                            </button>
+
+                            <ul class="dropdown-menu dropdown-menu-end p-2 shadow-sm" style="min-width: 300px;"
+                                id="notificationList">
+                                <li class="fw-bold text-dark px-2">Notifications</li>
+                                <li>
+                                    <hr class="dropdown-divider" />
+                                </li>
+                                <li class="text-muted px-2">Loading...</li>
+                            </ul>
+                        </div>
+
+
+                        <a class="btn py-0 " href="#" data-bs-toggle="dropdown"
                             style="background-color: var(--primary_color) ;" aria-expanded="false">
                             <img id="userProfileImage" src="~/img/default_profile_picture.png"
                                 class="img-fluid rounded-circle"
@@ -144,7 +166,7 @@
                     <a href="@Url.Action("Index", "Home")"
                         class="sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "Home" ? "active" : "")"><i
                             class="fas fa-tachometer-alt pe-2"></i>Dashboard</a>
-                </li>  
+                </li>
                 @if (User.FindFirstValue(ClaimTypes.Role) == "student")
                 {
                     <li class="sidebar-item">
@@ -240,7 +262,81 @@
                 document.getElementById("sidebarContainer").classList.toggle("collapsed");
             }
         });
+
+     
     </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.0/signalr.min.js"></script>
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/announcementHub")
+            .build();
+
+        connection.start().then(() => console.log("SignalR connected")).catch(err => console.error(err));
+
+        connection.on("ReceiveAnnouncement", function (title, message) {
+            checkUnreadAnnouncements();
+            loadAnnouncements();
+        });
+
+        function loadAnnouncements() {
+            $.ajax({
+                url: '/Announcement/GetRecent',
+                method: 'GET',
+                success: function (data) {
+                    const $list = $("#notificationList");
+                    $list.empty();
+
+                    if (data && data.length > 0) {
+                        $list.append(`<li class="fw-bold text-dark px-2">Announcements</li>`);
+                        $list.append(`<li><hr class="dropdown-divider" /></li>`);
+                        data.forEach(item => {
+                            $list.append(`
+                            <li class="px-2 py-1">
+                                <div class="fw-semibold">${item.title}</div>
+                                <div class="text-muted small">${item.message}</div>
+                            </li>
+                        `);
+                        });
+                    } else {
+                        $list.append(`<li class="text-muted px-2">No announcements found.</li>`);
+                    }
+                },
+                error: function () {
+                    $("#notificationList").html('<li class="text-danger px-2">Error loading announcements</li>');
+                }
+            });
+        }
+        function checkUnreadAnnouncements() {
+            $.ajax({
+                url: "/Announcement/HasUnread",
+                method: "GET",
+                success: function (response) {
+                    if (response.hasUnread) {
+                        $("#notificationDot").removeClass("d-none");
+                    } else {
+                        $("#notificationDot").addClass("d-none");
+                    }
+                },
+                error: function () {
+                    console.log("Failed to check unread announcements.");
+                }
+            });
+        }
+        $(document).ready(function () {
+            checkUnreadAnnouncements();
+            loadAnnouncements();
+
+            $("#notificationBell").on("click", function () {
+                $("#notificationDot").addClass("d-none");
+                $.ajax({
+                    url: "/Announcement/MarkAsRead",
+                    type: "POST"
+                });
+            });
+        });
+    </script>
+
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)

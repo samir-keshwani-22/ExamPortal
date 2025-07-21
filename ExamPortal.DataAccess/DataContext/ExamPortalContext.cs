@@ -31,6 +31,8 @@ public partial class ExamPortalContext : DbContext
     public DbSet<UserSession> UserSessions { get; set; }
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<ExamRegistration> ExamRegistrations { get; set; }
+    public DbSet<UserAnnouncementStatus> UserAnnouncementStatuses { get; set; }
+
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseNpgsql("Name=ConnectionStrings:my_connection");

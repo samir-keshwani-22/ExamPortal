@@ -14,9 +14,9 @@ public class StudentController : Controller
     }
 
     [HttpGet("Index")]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string sortBy = "FirstName", bool ascending = true)
     {
-        List<StudentViewModel> students = await _studentService.GetAllStudentAsync();
+        List<StudentViewModel> students = await _studentService.GetAllStudentAsync(sortBy, ascending);
         return View(students);
     }
 
@@ -48,9 +48,9 @@ public class StudentController : Controller
     }
 
     [HttpGet("GetStudentListPartial")]
-    public async Task<IActionResult> GetStudentListPartial()
+    public async Task<IActionResult> GetStudentListPartial(string sortBy = "FirstName", bool ascending = true)
     {
-        List<StudentViewModel> students = await _studentService.GetAllStudentAsync();
+        List<StudentViewModel> students = await _studentService.GetAllStudentAsync(sortBy, ascending);
         return PartialView("_StudentList", students);
     }
 

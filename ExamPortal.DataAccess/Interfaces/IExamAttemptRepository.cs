@@ -8,6 +8,6 @@ public interface IExamAttemptRepository : IGenericRepository<ExamAttempt>
        Task<ExamAttempt?> GetAttemptWithDetailsAsync(int attemptId);
 
        Task<List<ExamAttempt>> GetByUserIdAsync(int userId);
-       
+       Task<int> GetTotalAttemptCountAsync();
 
 }

@@ -8,7 +8,10 @@ namespace ExamPortal.DataAccess.Interfaces
 
         public Task<IEnumerable<Exam>> GetAllAsync();
 
-        
+        Task<List<Exam>> GetRecentlyCreatedExamsAsync(int count = 5);
 
+        Task<int> GetTotalExamCountAsync();
+        Task<int> GetActiveExamCountAsync();
+        Task<List<Exam>> GetUpcomingExamsAsync(int take = 5);
     }
 }

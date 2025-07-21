@@ -6,6 +6,8 @@ public interface IUserRepository : IGenericRepository<User>
 {
     Task<User> GetByEmailAsync(string email);
     Task<User> GetByResetToken(string token);
-    Task<List<User>> GetAllStudents();
+    Task<List<User>> GetAllStudents(string sortBy, bool ascending);
+    Task<int> GetTotalUserCountAsync();
+
 
 }

@@ -4,7 +4,7 @@ namespace ExamPortal.BusinessLogic.Interfaces;
 
 public interface IStudentService
 {
-    Task<List<StudentViewModel>> GetAllStudentAsync();
+    Task<List<StudentViewModel>> GetAllStudentAsync(string sortBy = "FirstName", bool ascending = true);
 
     Task<bool> CheckStudentExistsAsync(string email);
     Task<bool> CheckStudentExistsForEditAsync(string email, int studentId);

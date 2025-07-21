@@ -3,6 +3,7 @@ using System;
 using ExamPortal.DataAccess.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ExamPortal.DataAccess.Migrations
 {
     [DbContext(typeof(ExamPortalContext))]
-    partial class ExamPortalContextModelSnapshot : ModelSnapshot
+    [Migration("20250718085917_AddedCreatedAtForFeedback")]
+    partial class AddedCreatedAtForFeedback
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,9 +32,6 @@ namespace ExamPortal.DataAccess.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Message")
                         .IsRequired()
@@ -260,9 +260,6 @@ namespace ExamPortal.DataAccess.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp without time zone");
 
                     b.Property<bool>("IsRead")
                         .HasColumnType("boolean");
@@ -522,35 +519,6 @@ namespace ExamPortal.DataAccess.Migrations
                     b.ToTable("users");
                 });
 
-            modelBuilder.Entity("ExamPortal.DataAccess.Models.UserAnnouncementStatus", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AnnouncementId")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("IsRead")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("ViewedAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AnnouncementId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserAnnouncementStatuses");
-                });
-
             modelBuilder.Entity("ExamPortal.DataAccess.Models.UserSession", b =>
                 {
                     b.Property<int>("Id")
@@ -707,25 +675,6 @@ namespace ExamPortal.DataAccess.Migrations
                         .HasConstraintName("fk_user_role");
 
                     b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("ExamPortal.DataAccess.Models.UserAnnouncementStatus", b =>
-                {
-                    b.HasOne("ExamPortal.DataAccess.Models.Announcement", "Announcement")
-                        .WithMany()
-                        .HasForeignKey("AnnouncementId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ExamPortal.DataAccess.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Announcement");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ExamPortal.DataAccess.Models.UserSession", b =>

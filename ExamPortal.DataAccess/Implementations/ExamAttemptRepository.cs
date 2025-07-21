@@ -28,11 +28,16 @@ public class ExamAttemptRepository : GenericRepository<ExamAttempt>, IExamAttemp
                 .ThenInclude(o => o.Options)
         .Include(a => a.Answers)
             .ThenInclude(ans => ans.SelectedOption)
-            .FirstOrDefaultAsync(a => a.Id == attemptId); 
+            .FirstOrDefaultAsync(a => a.Id == attemptId);
     }
 
     public async Task<List<ExamAttempt>> GetByUserIdAsync(int userId)
     {
         return await _examPortalContext.ExamAttempts.Where(a => a.UserId == userId).Include(a => a.Exam).ToListAsync();
+    }
+
+    public async Task<int> GetTotalAttemptCountAsync()
+    {
+        return await _examPortalContext.ExamAttempts.CountAsync();
     }
 }

@@ -23,7 +23,28 @@ namespace ExamPortal.DataAccess.Implementations
             return await _examPortalContext.Exams.Where(e => e.IsDeleted == false).OrderBy(e => e.Title).ToListAsync();
         }
 
-        
+        public async Task<int> GetTotalExamCountAsync()
+        {
+            return await _examPortalContext.Exams.CountAsync(e => e.IsDeleted == false);
+        }
 
+        public async Task<int> GetActiveExamCountAsync()
+        {
+            return await _examPortalContext.Exams.CountAsync(e => e.IsDeleted == false && e.StartDate < DateTime.Now && e.EndDate > DateTime.Now);
+        }
+
+        public async Task<List<Exam>> GetUpcomingExamsAsync(int take = 5)
+        {
+            return await _examPortalContext.Exams.Where(e => e.StartDate > DateTime.Now).OrderBy(e => e.StartDate).Take(take).ToListAsync();
+        }
+
+        public async Task<List<Exam>> GetRecentlyCreatedExamsAsync(int count = 5)
+        {
+            return await _examPortalContext.Exams
+                .Where(e => !e.IsDeleted.Value)
+                .OrderByDescending(e => e.CreatedAt)
+                .Take(count)
+                .ToListAsync();
+        }
     }
 }

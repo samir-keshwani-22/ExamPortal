@@ -18,10 +18,16 @@ namespace ExamPortal.DataAccess.Implementations
             return await _examPortalContext.ExamRegistrations.AnyAsync(er => er.ExamId == examId && er.UserId == userId);
         }
 
+        public async Task<int> GetRegistrationCountByExamIdAsync(int examId)
+        {
+            return await _examPortalContext.ExamRegistrations.CountAsync(r => r.ExamId == examId);
+        }
+
+
         public async Task<List<ExamRegistration>> GetUpcomingRegistrationsByUserIdAsync(int userId)
         {
             return await _examPortalContext.ExamRegistrations.Include(e => e.Exam).Where(er => er.UserId == userId && er.Exam.EndDate > DateTime.UtcNow).ToListAsync();
         }
-        
+
     }
 }

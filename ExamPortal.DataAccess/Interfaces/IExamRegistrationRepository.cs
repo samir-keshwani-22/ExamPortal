@@ -7,5 +7,6 @@ namespace ExamPortal.DataAccess.Interfaces
         Task<bool> CheckAlreadyRegisteredForExamAsync(int examId, int userId);
 
         Task<List<ExamRegistration>> GetUpcomingRegistrationsByUserIdAsync(int userId);
+        Task<int> GetRegistrationCountByExamIdAsync(int examId);
     }
 }

@@ -5,6 +5,7 @@ using ExamPortal.BusinessLogic.Interfaces;
 using ExamPortal.DataAccess.DataContext;
 using ExamPortal.DataAccess.Implementations;
 using ExamPortal.DataAccess.Interfaces;
+using ExamPortal.Web.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +27,8 @@ builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IExamsService, ExamsService>();
 builder.Services.AddScoped<IStudentDashboardService, StudentDashboardService>();
+builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
+builder.Services.AddScoped<IAnnouncementService, AnnouncementService>();
 
 // i need to pass the root folder path so used this way injecion 
 builder.Services.AddScoped<IEmailService>(provider =>
@@ -37,6 +40,9 @@ builder.Services.AddScoped<IQuestionOptionRepository, QuestionOptionRepository>(
 builder.Services.AddScoped<IExamRegistrationRepository, ExamRegistrationRepository>();
 builder.Services.AddScoped<IExamAttemptRepository, ExamAttemptRepository>();
 builder.Services.AddScoped<IAnswerRepository, AnswerRepository>();
+builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
+builder.Services.AddScoped<IAnnouncementRepository, AnnouncementRepository>();
+builder.Services.AddScoped<IUserAnnouncementStatusRepository, UserAnnouncementStatusRepository>();
 
 
 builder.Services.AddDbContext<ExamPortalContext>(q => q.UseNpgsql(conn));
@@ -102,6 +108,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Account/Login";
 });
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 app.UseStatusCodePages(async context =>
@@ -125,6 +132,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.MapHub<AnnouncementHub>("/announcementHub");
 
 app.UseAuthentication();
 app.UseAuthorization();

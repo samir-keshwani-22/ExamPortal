@@ -1,0 +1,74 @@
+@using ExamPortal.BusinessLogic.ViewModel.Announcement
+@model ExamPortal.BusinessLogic.ViewModel.Announcement.CreateAnnouncementViewModel
+
+@{
+    ViewData["Title"] = "Manage Announcements";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="card border shadow-sm">
+                <div class="card-header fw-bold bg-white">Create Announcement</div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post">
+                        <div class="mb-3">
+                            <div class="form-floating">
+                                <input asp-for="Title" class="form-control" placeholder="Enter announcement title" />
+                                <label asp-for="Title"></label>
+                                <span asp-validation-for="Title" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-floating">
+                                <textarea asp-for="Message" class="form-control" placeholder="Enter message"
+                                    style="height: 150px;"></textarea>
+                                <label asp-for="Message"></label>
+                                <span asp-validation-for="Message" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn primary-button-v1">Post Announcement</button>
+                        <a href="/AdminDashboard" type="button" class="btn secondary-button">Cancel</a>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border shadow-sm">
+                <div class="card-header fw-bold bg-white">Recent Announcements</div>
+                <div class="card-body">
+                    @if (ViewBag.RecentAnnouncements != null &&
+                                        ((List<AnnouncementViewModel>)ViewBag.RecentAnnouncements).Any())
+                    {
+                        var announcements = (List<AnnouncementViewModel>)ViewBag.RecentAnnouncements;
+                        <ul class="list-group list-group-flush">
+                            @foreach (var ann in announcements)
+                            {
+                                <li class="list-group-item">
+                                    <div class="fw-bold">@ann.Title</div>
+                                    <div class="text-muted small">@ann.Message</div>
+                                    <div class="text-muted fst-italic small">@ann.CreatedAt.ToString("dd MMM yyyy, hh:mm tt")
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No announcements found.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
