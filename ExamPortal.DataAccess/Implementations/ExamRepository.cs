@@ -20,7 +20,7 @@ namespace ExamPortal.DataAccess.Implementations
 
         public async Task<IEnumerable<Exam>> GetAllAsync()
         {
-            return await _examPortalContext.Exams.Where(e => e.IsDeleted == false).OrderBy(e => e.Title).ToListAsync();
+            return await _examPortalContext.Exams.Where(e => e.IsDeleted == false).OrderByDescending(e => e.StartDate).ToListAsync();
         }
 
         public async Task<int> GetTotalExamCountAsync()
@@ -46,5 +46,16 @@ namespace ExamPortal.DataAccess.Implementations
                 .Take(count)
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<Exam>> GetExamsForStudentAsync(int studentId)
+        {
+            return await _examPortalContext.ExamStudents
+            .Where(es => es.StudentId == studentId)
+            .Select(es => es.Exam)
+            .Where(e => e.IsDeleted == false)
+            .OrderByDescending(e => e.StartDate)
+            .ToListAsync();
+        }
+
     }
 }

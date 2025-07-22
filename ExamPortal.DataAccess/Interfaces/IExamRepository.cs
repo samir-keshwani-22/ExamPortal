@@ -13,5 +13,6 @@ namespace ExamPortal.DataAccess.Interfaces
         Task<int> GetTotalExamCountAsync();
         Task<int> GetActiveExamCountAsync();
         Task<List<Exam>> GetUpcomingExamsAsync(int take = 5);
+        Task<IEnumerable<Exam>> GetExamsForStudentAsync(int studentId);
     }
 }

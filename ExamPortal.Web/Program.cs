@@ -43,6 +43,7 @@ builder.Services.AddScoped<IAnswerRepository, AnswerRepository>();
 builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
 builder.Services.AddScoped<IAnnouncementRepository, AnnouncementRepository>();
 builder.Services.AddScoped<IUserAnnouncementStatusRepository, UserAnnouncementStatusRepository>();
+builder.Services.AddScoped<IExamStudentRepository, ExamStudentRepository>();
 
 
 builder.Services.AddDbContext<ExamPortalContext>(q => q.UseNpgsql(conn));

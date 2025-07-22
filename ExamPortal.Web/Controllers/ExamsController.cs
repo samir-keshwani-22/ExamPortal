@@ -19,7 +19,8 @@ namespace ExamPortal.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
-            List<ExamViewModel> exams = await _examinationService.GetAllExamsAsync();
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            List<ExamViewModel> exams = await _examinationService.GetAllExamsForStudentAsync(email);
             return View(exams);
         }
         public async Task<IActionResult> ExamInterface(int examId)

@@ -70,7 +70,7 @@ public partial class User
     public ICollection<UserSession> UserSessions { get; set; }
     public ICollection<Notification> Notifications { get; set; }
     public ICollection<Feedback> Feedbacks { get; set; }
-
+    public ICollection<ExamStudent> ExamStudents { get; set; }
     public ICollection<ExamRegistration> ExamRegistrations { get; set; }
 
 

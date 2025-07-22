@@ -230,6 +230,32 @@ function initializeFullscreen() {
     }
   });
 
+  document.addEventListener("keydown", function (e) {
+
+    if (
+      (e.key === "F5") ||
+      (e.ctrlKey && e.key === "r") ||
+      (e.metaKey && e.key === "r") // Mac
+    ) {
+      e.preventDefault();
+      toastr.warning("Reload is disabled during the exam.");
+    }
+
+    if (
+      (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "r") ||
+      (e.metaKey && e.shiftKey && e.key.toLowerCase() === "r")
+    ) {
+      e.preventDefault();
+      toastr.warning("Hard reload is blocked.");
+
+    }
+  });
+
+  window.addEventListener("beforeunload", function (e) {
+    e.preventDefault();
+  });
+
+
 
   document.addEventListener("visibilitychange", function () {
     if (document.hidden) {

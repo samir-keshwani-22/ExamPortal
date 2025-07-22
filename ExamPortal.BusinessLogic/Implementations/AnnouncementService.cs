@@ -12,8 +12,7 @@ public class AnnouncementService : IAnnouncementService
     private readonly IUserAnnouncementStatusRepository _userAnnouncementStatusRepository;
     public AnnouncementService(IAnnouncementRepository announcementRepository, IUserAnnouncementStatusRepository userAnnouncementStatusRepository, IUserRepository userRepository)
     {
-        _userRepository = userRepository;
-
+        _userRepository = userRepository; 
         _announcementRepository = announcementRepository;
         _userAnnouncementStatusRepository = userAnnouncementStatusRepository;
     }
@@ -49,8 +48,7 @@ public class AnnouncementService : IAnnouncementService
     {
         var user = await _userRepository.GetByEmailAsync(email);
         var allAnnouncementIds = await _announcementRepository.GetAllAsync();
-        var ids = allAnnouncementIds.Select(a => a.Id).ToList();
-
+        var ids = allAnnouncementIds.Select(a => a.Id).ToList(); 
         await _userAnnouncementStatusRepository.MarkAllAsReadAsync(user.Id, ids);
     }
 

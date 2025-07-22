@@ -23,6 +23,7 @@ namespace ExamPortal.DataAccess.Models
         public ICollection<ExamAttempt> Attempts { get; set; }
 
         public ICollection<ExamRegistration> Registrations { get; set; }
-        
+        public ICollection<ExamStudent> ExamStudents { get; set; }
+
     }
 }

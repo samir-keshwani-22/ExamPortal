@@ -9,9 +9,12 @@ namespace ExamPortal.Web.Controllers;
 public class ExaminationController : Controller
 {
     private readonly IExaminationService _examinationService;
-    public ExaminationController(IExaminationService examinationService)
+    private readonly IStudentService _studentService;
+
+    public ExaminationController(IExaminationService examinationService, IStudentService studentService)
     {
         _examinationService = examinationService;
+        _studentService = studentService;
     }
 
     [HttpGet("Index")]
@@ -29,13 +32,20 @@ public class ExaminationController : Controller
     }
 
     [HttpGet("AddExam")]
-    public IActionResult AddExam()
+    public async Task<IActionResult> AddExam()
     {
-        return PartialView("_AddExamModal", new ExamViewModel());
+        var student = await _studentService.GetAllStudentAsync();
+        var model = new AddExamViewModel
+        {
+            Students = student,
+            SelectedStudentIds = new()
+
+        };
+        return PartialView("_AddExamModal", model);
     }
 
     [HttpPost("AddExam")]
-    public async Task<IActionResult> AddExam(ExamViewModel model)
+    public async Task<IActionResult> AddExam(AddExamViewModel model)
     {
         if (!ModelState.IsValid)
             return BadRequest(new { message = "ModalState invalid .", errorCode = "ModelStateInvalid" });
@@ -46,19 +56,20 @@ public class ExaminationController : Controller
 
         int examId = await _examinationService.AddExamAsync(model);
         if (examId > 0)
-            return Ok(new { message = "Exam added successfully." }); 
+            return Ok(new { message = "Exam added successfully." });
         return BadRequest(new { message = "Internal server error", errorCode = "InternalServerError" });
     }
 
     [HttpGet("EditExam")]
     public async Task<IActionResult> EditExam(int id)
     {
-        ExamViewModel exam = await _examinationService.GetEditExamModel(id);
+        AddExamViewModel exam = await _examinationService.GetEditExamModel(id);
+
         return PartialView("_EditExamModal", exam);
     }
 
     [HttpPost("EditExam")]
-    public async Task<IActionResult> EditExam(ExamViewModel model)
+    public async Task<IActionResult> EditExam(AddExamViewModel model)
     {
         if (!ModelState.IsValid)
         {

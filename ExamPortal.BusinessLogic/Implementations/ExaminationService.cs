@@ -9,12 +9,18 @@ public class ExaminationService : IExaminationService
     private readonly IExamRepository _examRepository;
     private readonly IQuestionRepository _questionRepository;
     private readonly IQuestionOptionRepository _optionRepository;
+    private readonly IExamStudentRepository _examStudentRepository;
+    private readonly IUserRepository _userRepository;
+    private readonly IStudentService _studentService;
 
-    public ExaminationService(IExamRepository examRepository, IQuestionOptionRepository optionRepository, IQuestionRepository questionRepository)
+    public ExaminationService(IExamRepository examRepository, IQuestionOptionRepository optionRepository, IQuestionRepository questionRepository, IStudentService studentService, IExamStudentRepository examStudentRepository, IUserRepository userRepository)
     {
         _examRepository = examRepository;
         _questionRepository = questionRepository;
         _optionRepository = optionRepository;
+        _studentService = studentService;
+        _examStudentRepository = examStudentRepository;
+        _userRepository = userRepository;
     }
 
     public async Task<List<ExamViewModel>> GetAllExamsAsync()
@@ -34,7 +40,7 @@ public class ExaminationService : IExaminationService
         }).ToList();
     }
 
-    public async Task<int> AddExamAsync(ExamViewModel model)
+    public async Task<int> AddExamAsync(AddExamViewModel model)
     {
         Exam exam = new Exam
         {
@@ -44,7 +50,12 @@ public class ExaminationService : IExaminationService
             TotalMarks = model.TotalMarks,
             StartDate = model.StartDate,
             EndDate = model.EndDate,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            ExamStudents = model.SelectedStudentIds?
+            .Select(studentId => new ExamStudent
+            {
+                StudentId = studentId
+            }).ToList()
         };
         await _examRepository.AddAsync(exam);
         return exam.Id;
@@ -189,11 +200,11 @@ public class ExaminationService : IExaminationService
         };
         return model;
     }
-    
-    public async Task<ExamViewModel> GetEditExamModel(int examId)
+
+    public async Task<AddExamViewModel> GetEditExamModel(int examId)
     {
         Exam exam = await _examRepository.GetByIdAsync(examId);
-        return exam == null ? null : new ExamViewModel
+        return exam == null ? null : new AddExamViewModel
         {
             Id = exam.Id,
             Title = exam.Title,
@@ -201,11 +212,13 @@ public class ExaminationService : IExaminationService
             Duration = (int)exam.DurationMinutes.TotalMinutes,
             StartDate = exam.StartDate,
             EndDate = exam.EndDate,
-            TotalMarks = exam.TotalMarks
+            TotalMarks = exam.TotalMarks,
+            Students = await _studentService.GetAllStudentAsync(),
+            SelectedStudentIds = (await _examStudentRepository.GetAssignedStudentAsync(examId)).Select(es => es.StudentId).ToList()
         };
     }
 
-    public async Task<bool> EditExamAsync(ExamViewModel model)
+    public async Task<bool> EditExamAsync(AddExamViewModel model)
     {
         Exam existingExam = await _examRepository.GetExamByNameAsync(model.Title);
         if (existingExam != null && existingExam.Id != model.Id)
@@ -218,7 +231,9 @@ public class ExaminationService : IExaminationService
         exam.DurationMinutes = TimeSpan.FromMinutes(model.Duration);
         exam.StartDate = model.StartDate;
         exam.EndDate = model.EndDate;
-        return await _examRepository.UpdateAsync(exam);
+        var updated = await _examRepository.UpdateAsync(exam);
+        await _examStudentRepository.UpdateAssignedStudentsAsync(model.Id, model.SelectedStudentIds);
+        return updated;
     }
     public async Task<bool> DeleteExamAsync(int examId)
     {
@@ -246,5 +261,23 @@ public class ExaminationService : IExaminationService
         exam.TotalMarks -= question.Marks;
         question.IsDeleted = true;
         return await _questionRepository.UpdateAsync(question);
+    }
+
+    public async Task<List<ExamViewModel>> GetAllExamsForStudentAsync(string email)
+    {
+        int studentId = (await _userRepository.GetByEmailAsync(email)).Id;
+        IEnumerable<Exam> exams = await _examRepository.GetExamsForStudentAsync(studentId);
+        return exams.Select(e => new ExamViewModel
+        {
+            Id = e.Id,
+            Title = e.Title,
+            Description = e.Description,
+            Duration = (int)e.DurationMinutes.TotalMinutes,
+            TotalMarks = e.TotalMarks,
+            StartDate = e.StartDate,
+            EndDate = e.EndDate,
+            TotalQuestion = _questionRepository.GetQuestionsByExamIdAsync(e.Id).Result.Count,
+            ExamStatus = (e.EndDate <= DateTime.Now) ? "Completed" : (e.StartDate >= DateTime.Now) ? "Upcoming" : "Active"
+        }).ToList();
     }
 }

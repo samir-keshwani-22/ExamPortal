@@ -1,159 +1,94 @@
-@using ExamPortal.BusinessLogic.ViewModel.Exams
-@{
-    Layout = "_ExamLayout";
-    ViewData["Title"] = "Exam Page";
-}
-@model ExamInterfaceViewModel
+    @using ExamPortal.BusinessLogic.ViewModel.Exams
+    @{
+        Layout = "_ExamLayout";
+        ViewData["Title"] = "Exam Page";
+    }
+    @model ExamInterfaceViewModel
 
-<script src="~/js/exams.js"></script>
+    <script src="~/js/exams.js"></script>
 
-<div class="container-fluid h-100 bg-light d-flex p-0">
-    <div class="col-md-3 bg-white border-end d-flex flex-column p-0">
-        <div class="p-4 border-bottom">
-            <h2 class="h5 fw-bold mb-2">@Model.Title</h2>
-            <div class="text-muted small mb-1">Duration: @Model.TotalDuration min</div>
-            <div class="text-muted small mb-1">Total Questions: @Model.TotalQuestion</div>
-            <div class="text-muted small">Total Marks: @Model.TotalMarks</div>
+    <div class="container-fluid h-100 bg-light d-flex p-0">
+        <div class="col-md-3 bg-white border-end d-flex flex-column p-0">
+            <div class="p-4 border-bottom">
+                <h2 class="h5 fw-bold mb-2">@Model.Title</h2>
+                <div class="text-muted small mb-1">Duration: @Model.TotalDuration min</div>
+                <div class="text-muted small mb-1">Total Questions: @Model.TotalQuestion</div>
+                <div class="text-muted small">Total Marks: @Model.TotalMarks</div>
+            </div>
+            <div class="p-4 border-bottom">
+                @await Html.PartialAsync("_Timer")
+            </div>
+            <div class="p-4 border-top">
+                <button type="button" class="btn primary-button-v1  w-100" data-bs-toggle="modal"
+                    data-bs-target="#submitModal">
+                    <i class="bi bi-flag"></i> Submit Exam
+                </button>
+            </div>
         </div>
-        <div class="p-4 border-bottom">
-            @await Html.PartialAsync("_Timer")
-        </div>
-        <div class="p-4 border-top">
-            <button type="button" class="btn primary-button-v1  w-100" data-bs-toggle="modal"
-                data-bs-target="#submitModal">
-                <i class="bi bi-flag"></i> Submit Exam
-            </button>
-        </div>
-    </div>
-    <div class="col-md-9 d-flex flex-column p-0">
-        <div class="bg-white border-bottom p-4">
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="sidebar-logo">
-                    <img src="@Url.Content("~/img/logos/examportal-logo-transparent.png")" class="img-fluid  "
-                        alt="EXAM_PORTAL Logo">
+        <div class="col-md-9 d-flex flex-column p-0">
+            <div class="bg-white border-bottom p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="sidebar-logo">
+                        <img src="@Url.Content("~/img/logos/examportal-logo-transparent.png")" class="img-fluid  "
+                            alt="EXAM_PORTAL Logo">
+                    </div>
+                    <div>
+                        <button id="prevBtn" class="btn primary-button me-2"
+                            onclick="navigateToQuestion(currentQuestionIndex - 1)">
+                            <i class="bi bi-chevron-left"></i> Previous
+                        </button>
+                        <button id="nextBtn" class="btn primary-button"
+                            onclick="navigateToQuestion(currentQuestionIndex + 1)">
+                            Next <i class="bi bi-chevron-right"></i>
+                        </button>
+                    </div>
                 </div>
-                <div>
-                    <button id="prevBtn" class="btn primary-button me-2"
-                        onclick="navigateToQuestion(currentQuestionIndex - 1)">
-                        <i class="bi bi-chevron-left"></i> Previous
-                    </button>
-                    <button id="nextBtn" class="btn primary-button"
-                        onclick="navigateToQuestion(currentQuestionIndex + 1)">
-                        Next <i class="bi bi-chevron-right"></i>
-                    </button>
+            </div>
+            <div class="p-5 flex-grow-1">
+                <input type="hidden" id="attemptId" value="@Model.AttemptId" />
+                <div id="questionCardContainer">
+                    <input type="hidden" id="questionId" value="@Model.FirstQuestion.Id" />
+                    @await Html.PartialAsync("_QuestionCard", Model.FirstQuestion)
                 </div>
             </div>
         </div>
-        <div class="p-5 flex-grow-1">
-            <input type="hidden" id="attemptId" value="@Model.AttemptId" />
-            <div id="questionCardContainer">
-                <input type="hidden" id="questionId" value="@Model.FirstQuestion.Id" />
-                @await Html.PartialAsync("_QuestionCard", Model.FirstQuestion)
+    </div>
+
+    <div class="modal fade" id="submitModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4">
+                <div class="modal-header">
+                    <h5 class="modal-title text-warning">
+                        <i class="bi bi-exclamation-triangle-fill"></i> Submit Exam
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to submit?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn primary-button-v1" onclick="submitExam()">Submit</button>
+                    <button type="button" class="btn secondary-button" data-bs-dismiss="modal">Cancel</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="modal fade" id="submitModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content rounded-4">
-            <div class="modal-header">
-                <h5 class="modal-title text-warning">
-                    <i class="bi bi-exclamation-triangle-fill"></i> Submit Exam
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                Are you sure you want to submit?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn primary-button-v1" onclick="submitExam()">Submit</button>
-                <button type="button" class="btn secondary-button" data-bs-dismiss="modal">Cancel</button>
-            </div>
-        </div>
-    </div>
-</div>
+    <button id="reenterFullscreenBtn" class="btn btn-warning position-fixed bottom-0 end-0 m-4 d-none zindex-tooltip">
+        Re-enter Fullscreen
+    </button>
 
-<button id="reenterFullscreenBtn" class="btn btn-warning position-fixed bottom-0 end-0 m-4 d-none zindex-tooltip">
-    Re-enter Fullscreen
-</button>
+    @section Scripts {
+        <script>
+            var examId = @Model.ExamId;
+            var currentQuestionIndex = 0;
+            var totalQuestions = @Model.TotalQuestion;
 
-@section Scripts {
-    <script>
-        var examId = @Model.ExamId;
-        var currentQuestionIndex = 0;
-        var totalQuestions = @Model.TotalQuestion;
-
-        function submitExam() {
-            const attemptId = $("#attemptId").val();
-            const questionId = $("#questionId").val();
-            const selectedOptionId = $("input[name='answer']:checked").val();
-            $.ajax({
-                url: '/Exams/SaveAnswer',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({
-                    attemptId: attemptId,
-                    questionId: questionId,
-                    selectedOptionId: selectedOptionId || null
-                }),
-                success: function () {
-                    $.ajax({
-                        url: '/Exams/SubmitExam',
-                        type: 'POST',
-                        data: { attemptId: attemptId },
-                        success: function () {
-                            window.location.href = `/Exams/ResultPage?attemptId=${attemptId}`;
-                    
-                            },
-                        error: function () {
-                            toastr.error("Failed to submit exam.");
-                        }
-                    });
-                },
-                error: function () {
-                    toastr.error("Failed to save answer.");
-                }
-            });
-        }
-
-        function loadQuestionCard(examId, questionIndex) {
-            return new Promise((resolve, reject) => {
-                $.get(`/Exams/GetQuestionCard?examId=${examId}&questionIndex=${questionIndex}`, function (html) {
-                    $("#questionCardContainer").html(html);
-                    const newQuestionId = $("#questionCardContainer #questionId").val();
-                    $("#questionId").val(newQuestionId);
-                    currentQuestionIndex = questionIndex;
-                    updateNavButtons();
-                    resolve();
-                }).fail(() => {
-                    reject("Failed to load question card.");
-                });
-            });
-        }
-
-        function fetchAndMarkAnswer() {
-            return new Promise((resolve) => {
+            function submitExam() {
                 const attemptId = $("#attemptId").val();
                 const questionId = $("#questionId").val();
-                $.get(`/Exams/GetAnswer?attemptId=${attemptId}&questionId=${questionId}`, function (data) {
-                    if (data && data.selectedOptionId) {
-                        $(`input[name='answer'][value='${data.selectedOptionId}']`).prop("checked", true);
-                    }
-                    resolve();
-                });
-            });
-        }
-
-
-        async function navigateToQuestion(index) {
-            if (index < 0 || index >= totalQuestions) return;
-            debugger
-            const attemptId = $("#attemptId").val();
-            const questionId = $("#questionId").val();
-            const selectedOptionId = $("input[name='answer']:checked").val();
-            try {
-                await $.ajax({
+                const selectedOptionId = $("input[name='answer']:checked").val();
+                $.ajax({
                     url: '/Exams/SaveAnswer',
                     type: 'POST',
                     contentType: 'application/json',
@@ -161,29 +96,94 @@
                         attemptId: attemptId,
                         questionId: questionId,
                         selectedOptionId: selectedOptionId || null
-                    })
+                    }),
+                    success: function () {
+                        $.ajax({
+                            url: '/Exams/SubmitExam',
+                            type: 'POST',
+                            data: { attemptId: attemptId },
+                            success: function () {
+                                window.location.href = `/Exams/ResultPage?attemptId=${attemptId}`;
+                        
+                                },
+                            error: function () {
+                                toastr.error("Failed to submit exam.");
+                            }
+                        });
+                    },
+                    error: function () {
+                        toastr.error("Failed to save answer.");
+                    }
                 });
-                await loadQuestionCard(examId, index);
-                await fetchAndMarkAnswer();
-            } catch (error) {
-                toastr.error("Failed to save or load question.");
             }
-        }
-        function updateNavButtons() {
-            $("#prevBtn").prop("disabled", currentQuestionIndex === 0);
-            $("#nextBtn").prop("disabled", currentQuestionIndex === totalQuestions - 1);
-        }
 
-        $(document).ready(async function () {
+            function loadQuestionCard(examId, questionIndex) {
+                return new Promise((resolve, reject) => {
+                    $.get(`/Exams/GetQuestionCard?examId=${examId}&questionIndex=${questionIndex}`, function (html) {
+                        $("#questionCardContainer").html(html);
+                        const newQuestionId = $("#questionCardContainer #questionId").val();
+                        $("#questionId").val(newQuestionId);
+                        currentQuestionIndex = questionIndex;
+                        updateNavButtons();
+                        resolve();
+                    }).fail(() => {
+                        reject("Failed to load question card.");
+                    });
+                });
+            }
 
-            setTimeout(() => {
-                initializeFullscreen();
-            }, 100);
+            function fetchAndMarkAnswer() {
+                return new Promise((resolve) => {
+                    const attemptId = $("#attemptId").val();
+                    const questionId = $("#questionId").val();
+                    $.get(`/Exams/GetAnswer?attemptId=${attemptId}&questionId=${questionId}`, function (data) {
+                        if (data && data.selectedOptionId) {
+                            $(`input[name='answer'][value='${data.selectedOptionId}']`).prop("checked", true);
+                        }
+                        resolve();
+                    });
+                });
+            }
 
-            updateNavButtons();
-            await fetchAndMarkAnswer();
-        });
 
-    </script>
+            async function navigateToQuestion(index) {
+                if (index < 0 || index >= totalQuestions) return;
+                debugger
+                const attemptId = $("#attemptId").val();
+                const questionId = $("#questionId").val();
+                const selectedOptionId = $("input[name='answer']:checked").val();
+                try {
+                    await $.ajax({
+                        url: '/Exams/SaveAnswer',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            attemptId: attemptId,
+                            questionId: questionId,
+                            selectedOptionId: selectedOptionId || null
+                        })
+                    });
+                    await loadQuestionCard(examId, index);
+                    await fetchAndMarkAnswer();
+                } catch (error) {
+                    toastr.error("Failed to save or load question.");
+                }
+            }
+            function updateNavButtons() {
+                $("#prevBtn").prop("disabled", currentQuestionIndex === 0);
+                $("#nextBtn").prop("disabled", currentQuestionIndex === totalQuestions - 1);
+            }
 
-}
+            $(document).ready(async function () {
+
+                setTimeout(() => {
+                    initializeFullscreen();
+                }, 100);
+
+                updateNavButtons();
+                await fetchAndMarkAnswer();
+            });
+
+        </script>
+
+    }

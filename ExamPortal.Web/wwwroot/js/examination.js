@@ -5,6 +5,7 @@ function openAddExamModal() {
   $.get("/Examination/AddExam", function (data) {
     $("#addExamContainer").html(data);
     $("#addExamModal").modal("show");
+    initializeStudentDropdownHandlers();
   });
 }
 
@@ -78,6 +79,60 @@ function confirmQuestionDelete() {
     }
   });
 }
+function initializeStudentDropdownHandlers() {
+  const $selectAll = $('#selectAllStudents');
+  const $studentCheckboxes = $('.student-checkbox');
+  const $selectedCountBadge = $('#selectedCountBadge');
+  const $dropdownButtonText = $('#dropdownButtonText');
+
+  function updateSelected() {
+    const selected = $studentCheckboxes.filter(':checked').length;
+
+    $selectedCountBadge.text(selected);
+    $selectedCountBadge.toggle(selected > 0);
+    $dropdownButtonText.text(selected > 0
+      ? `${selected} Student(s) Selected`
+      : 'Select Students');
+
+    $selectAll.prop('checked', selected === $studentCheckboxes.length);
+  }
+
+  $selectAll.on('change', function () {
+    $studentCheckboxes.prop('checked', this.checked);
+    updateSelected();
+  });
+
+  $studentCheckboxes.on('change', updateSelected);
+
+  updateSelected();
+}
+function initializeStudentDropdownHandlersEdit() {
+  const $selectAll = $('#selectAllStudentsEdit');
+  const $studentCheckboxes = $('.student-checkbox-edit');
+  const $selectedCountBadge = $('#selectedCountBadgeEdit');
+  const $dropdownButtonText = $('#dropdownButtonTextEdit');
+
+  function updateSelected() {
+    const selected = $studentCheckboxes.filter(':checked').length;
+
+    $selectedCountBadge.text(selected);
+    $selectedCountBadge.toggle(selected > 0);
+    $dropdownButtonText.text(selected > 0
+      ? `${selected} Student(s) Selected`
+      : 'Select Students');
+
+    $selectAll.prop('checked', selected === $studentCheckboxes.length);
+  }
+
+  $selectAll.on('change', function () {
+    $studentCheckboxes.prop('checked', this.checked);
+    updateSelected();
+  });
+
+  $studentCheckboxes.on('change', updateSelected);
+
+  updateSelected();
+}
 
 function checkForDateValidation(startDate, endDate) {
   return startDate < endDate;
@@ -125,10 +180,14 @@ $(document).ready(function () {
       success: function (data) {
         $("#editExamContainer").html(data);
         $("#editExamModal").modal("show");
+        initializeStudentDropdownHandlersEdit();
       }
     });
 
   });
+
+
+
 
   // _QuestionForm.cshtml   
   $(document).on("change", "#questionTypeSelector", function () {
@@ -179,6 +238,13 @@ $(document).ready(function () {
   });
 
   $(document).on("submit", "#addExamForm", function (event) {
+
+    const selected = $(".student-checkbox:checked").length;
+    if (selected === 0) {
+      toastr.error("Please select at least one student.");
+      event.preventDefault();
+      return;
+    }
     event.preventDefault();
     var result = checkForDateValidation($("#startDate").val(), $("#endDate").val());
     debugger

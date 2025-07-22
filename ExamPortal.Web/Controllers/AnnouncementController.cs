@@ -22,6 +22,7 @@ public class AnnouncementController : Controller
         ViewBag.RecentAnnouncements = recentAnnouncements;
         return View(new CreateAnnouncementViewModel());
     }
+
     [HttpPost]
     public async Task<IActionResult> Create(CreateAnnouncementViewModel model)
     {
