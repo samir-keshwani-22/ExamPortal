@@ -52,7 +52,7 @@ builder.Services.AddHostedService<ExamStartNotificationBackgroundService>();
 builder.Services.AddDbContext<ExamPortalContext>(q => q.UseNpgsql(conn));
 builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 
-var key = Encoding.ASCII.GetBytes(builder.Configuration["JwtSettings:SecretKey"]);
+var key = Encoding.ASCII.GetBytes(builder.Configuration["JwtSettings:SecretKey"]!);
 
 builder.Services.AddAuthentication(options =>
 {

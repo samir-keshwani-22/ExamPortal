@@ -37,7 +37,7 @@ public class NotificationController : Controller
     public async Task<IActionResult> HasUnread()
     {
            var email = User.FindFirstValue(ClaimTypes.Email);
-        var hasUnread = await _notificationService.HasUnreadNotificationsAsync(email);
+        var hasUnread = await _notificationService.HasUnreadNotificationsAsync(email!);
         return Json(new { hasUnread });
     }
 }

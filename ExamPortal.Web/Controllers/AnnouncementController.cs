@@ -47,7 +47,7 @@ public class AnnouncementController : Controller
     public async Task<IActionResult> MarkAsRead()
     {
         var email = User.FindFirstValue(ClaimTypes.Email);
-        await _announcementService.MarkAnnouncementsAsReadAsync(email);
+        await _announcementService.MarkAnnouncementsAsReadAsync(email!);
         return Ok();
     }
 
@@ -56,7 +56,7 @@ public class AnnouncementController : Controller
     public async Task<IActionResult> HasUnread()
     {
         var email = User.FindFirstValue(ClaimTypes.Email);
-        var hasUnread = await _announcementService.HasUnreadAnnouncementsAsync(email);
+        var hasUnread = await _announcementService.HasUnreadAnnouncementsAsync(email!);
         return Json(new { hasUnread });
     }
 
