@@ -4,18 +4,38 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExamPortal.Web.Controllers;
-
+/// <summary>
+/// Controller for the account related operation
+/// </summary>
 [AllowAnonymous]
 public class AccountController : Controller
 {
+    #region  Fields
     private readonly IAccountService _accountService;
+
+    #endregion 
+
+    #region  Constructors
+    /// <summary>
+    /// AccountController constructor
+    /// </summary>
+    /// <param name="accountService"></param>
     public AccountController(IAccountService accountService)
     {
         _accountService = accountService;
     }
+    #endregion
+
+    #region Methods 
+
+    /// <summary>
+    /// Returns the login view if the user not auth else redirects to the home page
+    /// </summary>
+    /// <returns></returns>
 
     [HttpGet]
     [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+
     public IActionResult Login()
     {
         if (User.Identity!.IsAuthenticated)
@@ -25,6 +45,11 @@ public class AccountController : Controller
         return View();
     }
 
+    /// <summary>
+    /// Handles the login operation.
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(LoginViewModel model)
@@ -51,11 +76,22 @@ public class AccountController : Controller
         return RedirectToAction("Index", "Home");
     }
 
+    /// <summary>
+    /// Returns the registration view
+    /// </summary>
+    /// <returns></returns>
+
     [HttpGet]
     public IActionResult Register()
     {
         return View();
     }
+
+    /// <summary>
+    /// Handles the registration operation
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
 
     [HttpPost]
     public async Task<IActionResult> Register(RegistrationViewModel model)
@@ -74,6 +110,11 @@ public class AccountController : Controller
         return View(model);
     }
 
+    /// <summary>
+    /// Handles the logout operation
+    /// </summary>
+    /// <returns></returns>
+
     [HttpPost]
     public IActionResult Logout()
     {
@@ -82,12 +123,22 @@ public class AccountController : Controller
         return RedirectToAction("Login");
     }
 
+    /// <summary>
+    /// Returns the view for the forget password 
+    /// </summary>
+    /// <returns></returns>
+
     [HttpGet]
     public IActionResult ForgetPassword()
     {
         return View();
     }
 
+    /// <summary>
+    /// Handles the forget password operation 
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
     [HttpPost]
     public async Task<IActionResult> ForgetPassword(ForgetPasswordViewModel model)
     {
@@ -107,12 +158,22 @@ public class AccountController : Controller
         return RedirectToAction("Login");
     }
 
+    /// <summary>
+    /// Returns the view for resetting the password 
+    /// </summary>
+    /// <param name="token"></param>
+    /// <returns></returns>
     [HttpGet]
     public IActionResult ResetPassword(string token)
     {
         return View(new ResetPasswordViewModel { Token = token });
     }
 
+    /// <summary>
+    /// Handles the reset password operation
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
     [HttpPost]
     public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
     {
@@ -130,4 +191,6 @@ public class AccountController : Controller
         }
         return View(model);
     }
+
+    #endregion
 }

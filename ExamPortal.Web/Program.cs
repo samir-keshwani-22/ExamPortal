@@ -50,6 +50,7 @@ builder.Services.AddScoped<IExamStudentRepository, ExamStudentRepository>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddHostedService<ExamStartNotificationBackgroundService>();
 builder.Services.AddDbContext<ExamPortalContext>(q => q.UseNpgsql(conn));
+
 builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 
 var key = Encoding.ASCII.GetBytes(builder.Configuration["JwtSettings:SecretKey"]!);

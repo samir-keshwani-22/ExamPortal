@@ -7,15 +7,29 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace ExamPortal.Web.Controllers;
 
+/// <summary>
+/// Controller for announcement related 
+/// </summary>
 public class AnnouncementController : Controller
 {
+    #region Fields
     private readonly IAnnouncementService _announcementService;
     private readonly IHubContext<AnnouncementHub> _hubContext;
+
+    #endregion
+    #region Constructors 
     public AnnouncementController(IAnnouncementService announcementService, IHubContext<AnnouncementHub> hubContext)
     {
         _announcementService = announcementService;
         _hubContext = hubContext;
     }
+    #endregion
+
+    #region Methods 
+    /// <summary>
+    /// Returns the announcement index page with recent announcements 
+    /// </summary>
+    /// <returns></returns>
     public async Task<IActionResult> Index()
     {
         var recentAnnouncements = await _announcementService.GetRecentAnnouncementsAsync();
@@ -23,6 +37,11 @@ public class AnnouncementController : Controller
         return View(new CreateAnnouncementViewModel());
     }
 
+    /// <summary>
+    /// Handles the creation of new announcements 
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
     [HttpPost]
     public async Task<IActionResult> Create(CreateAnnouncementViewModel model)
     {
@@ -36,12 +55,21 @@ public class AnnouncementController : Controller
         return RedirectToAction("Index");
     }
 
+    /// <summary>
+    /// Get recent announcements 
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
     public async Task<IActionResult> GetRecent()
     {
         var recentAnnouncements = await _announcementService.GetRecentAnnouncementsAsync(5);
         return Json(recentAnnouncements);
     }
+
+    /// <summary>
+    /// Mark all the announcements as read 
+    /// </summary>
+    /// <returns></returns>
 
     [HttpPost]
     public async Task<IActionResult> MarkAsRead()
@@ -51,6 +79,10 @@ public class AnnouncementController : Controller
         return Ok();
     }
 
+    /// <summary>
+    ///Checks for unread message  
+    /// </summary>
+    /// <returns></returns>
 
     [HttpGet]
     public async Task<IActionResult> HasUnread()
@@ -59,5 +91,7 @@ public class AnnouncementController : Controller
         var hasUnread = await _announcementService.HasUnreadAnnouncementsAsync(email!);
         return Json(new { hasUnread });
     }
+
+    #endregion
 
 }
