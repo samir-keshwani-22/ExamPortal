@@ -17,7 +17,7 @@ public class ProfileController : Controller
     }
     public async Task<IActionResult> Index()
     {
-        string email = User.FindFirstValue(ClaimTypes.Email);
+        string email = User.FindFirstValue(ClaimTypes.Email)!;
         if (email == null) return RedirectToAction("Login", "Account");
         MyProfileViewModel model = await _profileService.GetUserProfileAsync(email);
         return View(model);
@@ -57,7 +57,7 @@ public class ProfileController : Controller
     }
 
     [HttpGet("ChangePassword")]
-    public async Task<IActionResult> ChangePassword()
+    public IActionResult ChangePassword()
     {
         return PartialView("_ChangePasswordModal", new ChangePasswordViewModel());
     }
@@ -73,7 +73,7 @@ public class ProfileController : Controller
         {
             return BadRequest(new { message = "New Password cannot be same as the current  one", errorCode = "SamePasswordError" });
         }
-        string email = User.FindFirstValue(ClaimTypes.Email);
+        string email = User.FindFirstValue(ClaimTypes.Email)!;
         bool result = await _profileService.ChangeUserPasswordAsync(email, model.CurrentPassword, model.NewPassword);
         if (!result)
         {
@@ -86,7 +86,7 @@ public class ProfileController : Controller
     [AllowAnonymous]
     public async Task<IActionResult> GetNameAndImage()
     {
-        string userEmail = User.FindFirstValue(ClaimTypes.Email);
+        string userEmail = User.FindFirstValue(ClaimTypes.Email)!;
         if (string.IsNullOrEmpty(userEmail))
         {
             return Json(new { success = false, message = "User not logged in" });

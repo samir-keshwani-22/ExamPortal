@@ -18,8 +18,7 @@ namespace ExamPortal.DataAccess.Models
         public DateTime? DeletedAt { get; set; }
         public bool? IsDeleted { get; set; } = false;
 
-        public ICollection<Question> Questions { get; set; }
-        public ICollection<ExamSchedule> Schedules { get; set; }
+        public ICollection<Question> Questions { get; set; } 
         public ICollection<ExamAttempt> Attempts { get; set; }
 
         public ICollection<ExamRegistration> Registrations { get; set; }

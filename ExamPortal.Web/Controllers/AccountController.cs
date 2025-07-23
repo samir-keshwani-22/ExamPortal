@@ -18,7 +18,7 @@ public class AccountController : Controller
     [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public IActionResult Login()
     {
-        if (User.Identity.IsAuthenticated)
+        if (User.Identity!.IsAuthenticated)
         {
             return RedirectToAction("Index", "Home");
         }
@@ -52,7 +52,7 @@ public class AccountController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Register()
+    public IActionResult Register()
     {
         return View();
     }

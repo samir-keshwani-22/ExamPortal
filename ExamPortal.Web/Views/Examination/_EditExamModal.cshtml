@@ -59,7 +59,7 @@
                                         </div>
                                     </div>
                                     <div id="studentDropdownListEdit">
-                                        @foreach (var student in Model.Students)
+                                        @foreach (var student in Model.Students!)
                                         {
                                             var isSelected = Model.SelectedStudentIds != null &&
                                             Model.SelectedStudentIds.Contains(student.Id);

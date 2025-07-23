@@ -42,15 +42,11 @@ namespace ExamPortal.BusinessLogic.Implementations
             var user = await _userRepository.GetByEmailAsync(email);
             if (user == null) throw new Exception("User not found.");
 
-            // bool alreadyAttempted = await _examAttemptRepository.CheckIfAlreadyAttemptedAsync(examId, user.Id);
-            // if (alreadyAttempted)
-            //     throw new Exception("Already attempted.");
-
             var attempt = new ExamAttempt
             {
                 UserId = user.Id,
                 ExamId = examId,
-                StartedAt = DateTime.UtcNow
+                StartedAt = DateTime.Now
             };
             await _examAttemptRepository.AddAsync(attempt);
             return attempt.Id;
@@ -172,7 +168,8 @@ namespace ExamPortal.BusinessLogic.Implementations
             ExamRegistration registration = new ExamRegistration
             {
                 ExamId = examId,
-                UserId = user.Id
+                UserId = user.Id,
+                RegisteredAt = DateTime.Now
             };
             await _examRegistrationRepository.AddAsync(registration);
             return true;
@@ -222,7 +219,7 @@ namespace ExamPortal.BusinessLogic.Implementations
                     SelectedOptionId = null
                 };
                 await _answerRepository.AddAsync(unansweredAnswer);
-                existingAnswers.Add(unansweredAnswer); 
+                existingAnswers.Add(unansweredAnswer);
             }
 
             double score = 0;

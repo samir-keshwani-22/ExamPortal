@@ -20,12 +20,12 @@ namespace ExamPortal.Web.Controllers
         public async Task<IActionResult> Index()
         {
             var email = User.FindFirstValue(ClaimTypes.Email);
-            List<ExamViewModel> exams = await _examinationService.GetAllExamsForStudentAsync(email);
+            List<ExamViewModel> exams = await _examinationService.GetAllExamsForStudentAsync(email!);
             return View(exams);
         }
         public async Task<IActionResult> ExamInterface(int examId)
         {
-            string email = User.FindFirstValue(ClaimTypes.Email);
+            string email = User.FindFirstValue(ClaimTypes.Email)!;
             int attemptId = await _examsService.CreateExamAttemptAsync(examId, email);
             ExamInterfaceViewModel model = await _examsService.GetExamInterfaceViewModel(examId);
             model.AttemptId = attemptId;
@@ -51,7 +51,7 @@ namespace ExamPortal.Web.Controllers
 
         public async Task<IActionResult> RegisterForExam(int examId)
         {
-            string email = User.FindFirstValue(ClaimTypes.Email);
+            string email = User.FindFirstValue(ClaimTypes.Email)!;
             bool checkIfAlreadyRegistered = await _examsService.CheckIfAlreadyRegisteredForExamAsync(examId, email);
             if (checkIfAlreadyRegistered)
             {

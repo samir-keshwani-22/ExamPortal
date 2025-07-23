@@ -5,10 +5,12 @@ using ExamPortal.BusinessLogic.Interfaces;
 using ExamPortal.DataAccess.DataContext;
 using ExamPortal.DataAccess.Implementations;
 using ExamPortal.DataAccess.Interfaces;
+using ExamPortal.Web.Background;
 using ExamPortal.Web.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -29,6 +31,7 @@ builder.Services.AddScoped<IExamsService, ExamsService>();
 builder.Services.AddScoped<IStudentDashboardService, StudentDashboardService>();
 builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
 builder.Services.AddScoped<IAnnouncementService, AnnouncementService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 
 // i need to pass the root folder path so used this way injecion 
 builder.Services.AddScoped<IEmailService>(provider =>
@@ -44,9 +47,10 @@ builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
 builder.Services.AddScoped<IAnnouncementRepository, AnnouncementRepository>();
 builder.Services.AddScoped<IUserAnnouncementStatusRepository, UserAnnouncementStatusRepository>();
 builder.Services.AddScoped<IExamStudentRepository, ExamStudentRepository>();
-
-
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+builder.Services.AddHostedService<ExamStartNotificationBackgroundService>();
 builder.Services.AddDbContext<ExamPortalContext>(q => q.UseNpgsql(conn));
+builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 
 var key = Encoding.ASCII.GetBytes(builder.Configuration["JwtSettings:SecretKey"]);
 
@@ -134,7 +138,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 app.MapHub<AnnouncementHub>("/announcementHub");
-
+app.MapHub<NotificationHub>("/notificationHub");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllerRoute(

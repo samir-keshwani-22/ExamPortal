@@ -22,7 +22,7 @@ public class StudentController : Controller
 
     [HttpGet("AddStudent")]
 
-    public async Task<IActionResult> AddStudent()
+    public IActionResult AddStudent()
     {
         return PartialView("_AddStudent", new StudentViewModel());
     }

@@ -20,8 +20,7 @@ public partial class ExamPortalContext : DbContext
     public virtual DbSet<Role> Roles { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
-    public DbSet<Exam> Exams { get; set; }
-    public DbSet<ExamSchedule> ExamSchedules { get; set; }
+    public DbSet<Exam> Exams { get; set; } 
     public DbSet<Question> Questions { get; set; }
     public DbSet<QuestionOption> QuestionOptions { get; set; }
     public DbSet<ExamAttempt> ExamAttempts { get; set; }

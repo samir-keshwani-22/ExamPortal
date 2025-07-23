@@ -13,7 +13,6 @@
     <link rel="stylesheet" href="~/css/delete-modal.css" />
     <link rel="stylesheet" href="~/css/sidebar.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
-    @* <link rel="icon" type="image/png" sizes="321x321" href="@Url.Content("~/img/logos/logo-dark-bg.png")" /> *@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
@@ -21,7 +20,7 @@
     <div class="d-flex flex-column h-100">
         <div class="flex-grow-1 d-flex">
             <!-- Sidebar -->
-            <div class="sidebar-container border-end   p-0" id="sidebarContainer">
+            <div class="sidebar-container border-end p-0" id="sidebarContainer">
                 <aside id="sidebar" class="vh-100">
                     <div class="h-100">
                         <div class="sidebar-logo">
@@ -78,27 +77,48 @@
                             <button
                                 class="btn position-relative bg-white border rounded-circle shadow-sm px-3 py-2 me-2"
                                 data-bs-toggle="dropdown" aria-expanded="false" id="notificationBell"
-                                title="View Announcements">
+                                title="View Announcements & Notifications">
                                 <i class="bi bi-bell fs-5 text-dark"></i>
-                                <span id="notificationDot" style="  
-                                    transform:translate(-93%, -4%) !important; 
-                                    padding: 0.35rem !important;"
+                                <span id="announcementDot"
+                                    style="transform:translate(-93%, -4%) !important; padding: 0.35rem !important;"
                                     class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-white rounded-circle d-none">
-                                    <span class="visually-hidden">New alerts</span>
+                                    <span class="visually-hidden">New announcements</span>
                                 </span>
-
+                                <span id="notificationDot"
+                                    style="transform:translate(-93%, 16%) !important; padding: 0.35rem !important;"
+                                    class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-white rounded-circle d-none">
+                                    <span class="visually-hidden">New notifications</span>
+                                </span>
                             </button>
 
-                            <ul class="dropdown-menu dropdown-menu-end p-2 shadow-sm" style="min-width: 300px;"
-                                id="notificationList">
-                                <li class="fw-bold text-dark px-2">Notifications</li>
+                            <ul class="dropdown-menu dropdown-menu-end p-2 shadow-sm" style="min-width:350px;"
+                                id="notificationDropdownMenu">
                                 <li>
-                                    <hr class="dropdown-divider" />
+                                    <ul class="nav nav-tabs mb-2" id="notifTab" role="tablist">
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link active" id="ann-tab" data-bs-toggle="tab"
+                                                data-bs-target="#announcements" type="button"
+                                                role="tab">Announcements</button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" id="notif-tab" data-bs-toggle="tab"
+                                                data-bs-target="#notifications" type="button"
+                                                role="tab">Notifications</button>
+                                        </li>
+                                    </ul>
                                 </li>
-                                <li class="text-muted px-2">Loading...</li>
+                                <li>
+                                    <div class="tab-content mt-2">
+                                        <div class="tab-pane fade show active" id="announcements" role="tabpanel">
+                                            <ul id="announcementList" class="list-group p-0"></ul>
+                                        </div>
+                                        <div class="tab-pane fade" id="notifications" role="tabpanel">
+                                            <ul id="notificationList" class="list-group p-0"></ul>
+                                        </div>
+                                    </div>
+                                </li>
                             </ul>
                         </div>
-
 
                         <a class="btn py-0 " href="#" data-bs-toggle="dropdown"
                             style="background-color: var(--primary_color) ;" aria-expanded="false">
@@ -148,12 +168,11 @@
             </div>
         </div>
     </div>
-    <div id="changePasswordContainer">
-    </div>
+    <div id="changePasswordContainer"></div>
 
     <!-- Offcanvas Sidebar for Mobile -->
     <div class="offcanvas offcanvas-start" id="mobileSidebar">
-        <div class="offcanvas-header  ">
+        <div class="offcanvas-header">
             <div class="sidebar-logo">
                 <img src="@Url.Content("~/img/logos/examportal-logo-transparent.png")" class="img-fluid"
                     alt="Exam Portal Logo">
@@ -161,8 +180,8 @@
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
         </div>
         <div class="offcanvas-body">
-            <ul class="sidebar-nav ">
-                <li class="sidebar-item  ">
+            <ul class="sidebar-nav">
+                <li class="sidebar-item">
                     <a href="@Url.Action("Index", "Home")"
                         class="sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "Home" ? "active" : "")"><i
                             class="fas fa-tachometer-alt pe-2"></i>Dashboard</a>
@@ -262,54 +281,107 @@
                 document.getElementById("sidebarContainer").classList.toggle("collapsed");
             }
         });
-
-     
     </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.0/signalr.min.js"></script>
     <script>
-        const connection = new signalR.HubConnectionBuilder()
+
+        const announcementConnection = new signalR.HubConnectionBuilder()
             .withUrl("/announcementHub")
             .build();
 
-        connection.start().then(() => console.log("SignalR connected")).catch(err => console.error(err));
-
-        connection.on("ReceiveAnnouncement", function (title, message) {
+        announcementConnection.start().then(() => console.log("AnnouncementHub connected")).catch(err => console.error(err));
+        announcementConnection.on("ReceiveAnnouncement", function (title, message) {
             checkUnreadAnnouncements();
             loadAnnouncements();
         });
+
+
+        const notificationConnection = new signalR.HubConnectionBuilder()
+            .withUrl("/notificationHub")
+            .build();
+
+        notificationConnection.start().then(() => console.log("NotificationHub connected")).catch(err => console.error(err));
+        notificationConnection.on("ReceiveNotification", function (message) {
+            checkUnreadNotifications();
+            loadNotifications();
+            toastr.info(message, "Exam Reminder");
+        });
+
 
         function loadAnnouncements() {
             $.ajax({
                 url: '/Announcement/GetRecent',
                 method: 'GET',
                 success: function (data) {
+                    const $list = $("#announcementList");
+                    $list.empty();
+
+                    if (data && data.length > 0) {
+                        data.forEach(item => {
+                            $list.append(`
+                                <li class="list-group-item px-2 py-1">
+                                    <div class="fw-semibold">${item.title}</div>
+                                    <div class="text-muted small">${item.message}</div>
+                                </li>
+                            `);
+                        });
+                    } else {
+                        $list.append(`<li class="list-group-item text-muted px-2">No announcements found.</li>`);
+                    }
+                },
+                error: function () {
+                    $("#announcementList").html('<li class="list-group-item text-danger px-2">Error loading announcements</li>');
+                }
+            });
+        }
+        
+        function loadNotifications() {
+            $.ajax({
+                url: '/Notification/GetRecent',
+                method: 'GET',
+                success: function (data) {
                     const $list = $("#notificationList");
                     $list.empty();
 
                     if (data && data.length > 0) {
-                        $list.append(`<li class="fw-bold text-dark px-2">Announcements</li>`);
-                        $list.append(`<li><hr class="dropdown-divider" /></li>`);
                         data.forEach(item => {
                             $list.append(`
-                            <li class="px-2 py-1">
-                                <div class="fw-semibold">${item.title}</div>
-                                <div class="text-muted small">${item.message}</div>
-                            </li>
-                        `);
+                                <li class="list-group-item px-2 py-1">
+                                    <div class="fw-semibold">${item.title}</div>
+                                    <div class="text-muted small">${item.message}</div>
+                                    <div class="text-muted small">${item.createdAt}</div>
+                                </li>
+                            `);
                         });
                     } else {
-                        $list.append(`<li class="text-muted px-2">No announcements found.</li>`);
+                        $list.append(`<li class="list-group-item text-muted px-2">No notifications found.</li>`);
                     }
                 },
                 error: function () {
-                    $("#notificationList").html('<li class="text-danger px-2">Error loading announcements</li>');
+                    $("#notificationList").html('<li class="list-group-item text-danger px-2">Error loading notifications</li>');
                 }
             });
         }
+
+
         function checkUnreadAnnouncements() {
             $.ajax({
                 url: "/Announcement/HasUnread",
+                method: "GET",
+                success: function (response) {
+                    if (response.hasUnread) {
+                        $("#announcementDot").removeClass("d-none");
+                    } else {
+                        $("#announcementDot").addClass("d-none");
+                    }
+                }
+            });
+        }
+
+        function checkUnreadNotifications() {
+            $.ajax({
+                url: "/Notification/HasUnread",
                 method: "GET",
                 success: function (response) {
                     if (response.hasUnread) {
@@ -317,28 +389,36 @@
                     } else {
                         $("#notificationDot").addClass("d-none");
                     }
-                },
-                error: function () {
-                    console.log("Failed to check unread announcements.");
                 }
             });
         }
+
+        $("#ann-tab").on("click", function () {
+            $.ajax({ url: "/Announcement/MarkAsRead", type: "POST" });
+            $("#announcementDot").addClass("d-none");
+            loadAnnouncements();
+        });
+
+        $("#notif-tab").on("click", function () {
+            $.ajax({ url: "/Notification/MarkAllAsRead", type: "POST" });
+            $("#notificationDot").addClass("d-none");
+            loadNotifications();
+        });
+        $(document).ready(function () {
+            $('#notificationDropdownMenu .nav-link').on('click', function (e) {
+                e.stopPropagation();
+            });
+        });
+
         $(document).ready(function () {
             checkUnreadAnnouncements();
+            checkUnreadNotifications();
             loadAnnouncements();
-
-            $("#notificationBell").on("click", function () {
-                $("#notificationDot").addClass("d-none");
-                $.ajax({
-                    url: "/Announcement/MarkAsRead",
-                    type: "POST"
-                });
-            });
+            loadNotifications();
         });
     </script>
 
     <script src="~/js/site.js" asp-append-version="true"></script>
-
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 

@@ -13,7 +13,7 @@ public class StudentDashboardController : Controller
     }
     public async Task<IActionResult> Index()
     {
-        var email = User.FindFirstValue(ClaimTypes.Email);
+        var email = User.FindFirstValue(ClaimTypes.Email)!;
         var model = await _studentDashboardService.GetDashboardAsync(email);
         return View(model);
     }
