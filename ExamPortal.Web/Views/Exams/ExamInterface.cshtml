@@ -84,40 +84,52 @@
         var currentQuestionIndex = 0;
         var totalQuestions = @Model.TotalQuestion;
 
-        function submitExam() {
-            const attemptId = $("#attemptId").val();
-            const questionId = $("#questionId").val();
-            const selectedOptionId = $("input[name='answer']:checked").val();
-            window.onbeforeunload = null;
+       function submitExam() {
+    const attemptId = $("#attemptId").val();
+    const questionId = $("#questionId").val();
+    const selectedOptionId = $("input[name='answer']:checked").val();
+
+    
+    window.onbeforeunload = null;
+
+    $.ajax({
+        url: '/Exams/SaveAnswer',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            attemptId: attemptId,
+            questionId: questionId,
+            selectedOptionId: selectedOptionId || null
+        }),
+        success: function () {
             $.ajax({
-                url: '/Exams/SaveAnswer',
+                url: '/Exams/SubmitExam',
                 type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({
-                    attemptId: attemptId,
-                    questionId: questionId,
-                    selectedOptionId: selectedOptionId || null
-                }),
-                success: function () {
-                    $.ajax({
-                        url: '/Exams/SubmitExam',
-                        type: 'POST',
-                        data: { attemptId: attemptId },
-                        success: function () {
-                            window.onbeforeunload = null;
-                            window.location.href = `/Exams/ResultPage?attemptId=${attemptId}`;
-                        },
-                        error: function () {
-                            toastr.error("Failed to submit exam.");
-                        }
-                    });
+                data: { attemptId: attemptId },
+                success: function () { 
+                    window.onbeforeunload = null;
+                    window.location.href = `/Exams/ResultPage?attemptId=${attemptId}`;
                 },
                 error: function () {
-                    toastr.error("Failed to save answer.");
+                     window.onbeforeunload = function (e) {
+                        e.preventDefault();
+                        e.returnValue = '';
+                        return '';
+                    };
+                    toastr.error("Failed to submit exam.");
                 }
             });
+        },
+        error: function () {
+             window.onbeforeunload = function (e) {
+                e.preventDefault();
+                e.returnValue = '';
+                return '';
+            };
+            toastr.error("Failed to save answer.");
         }
-
+    });
+}
         function loadQuestionCard(examId, questionIndex) {
             return new Promise((resolve, reject) => {
                 $.get(`/Exams/GetQuestionCard?examId=${examId}&questionIndex=${questionIndex}`, function (html) {

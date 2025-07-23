@@ -180,6 +180,10 @@ function showFullscreenWarning() {
 
   document.getElementById("submitExamBtn").onclick = () => {
     modal.hide();
+    // Disable the warning before submitting from fullscreen modal
+    if (typeof disableBeforeUnloadWarning === "function") {
+      disableBeforeUnloadWarning();
+    }
     if (typeof submitExam === "function") {
       submitExam();
     } else {
@@ -251,11 +255,8 @@ function initializeFullscreen() {
     }
   });
 
-  window.addEventListener("beforeunload", function (e) {
-    e.preventDefault();
-  });
-
-
+  // Note: The beforeunload warning is now managed in the main exam page
+  // Don't add it here to avoid conflicts
 
   document.addEventListener("visibilitychange", function () {
     if (document.hidden) {
